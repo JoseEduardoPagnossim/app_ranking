@@ -1,0 +1,2366 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Brasileirão do Atendimento</title>
+  <style>
+    :root {
+      --navy-950: #061727;
+      --navy-900: #092238;
+      --navy-800: #123653;
+      --navy-700: #164567;
+      --blue-50: #eff8ff;
+      --blue-100: #dbeafe;
+      --blue-500: #2f80ed;
+      --green-50: #eafff3;
+      --green-100: #c8f8dc;
+      --green-500: #22c55e;
+      --green-700: #047857;
+      --red-50: #fff0f0;
+      --red-100: #ffdada;
+      --red-500: #ef4444;
+      --red-700: #b91c1c;
+      --yellow-300: #f8e74f;
+      --yellow-500: #eab308;
+      --slate-50: #f8fafc;
+      --slate-100: #edf2f7;
+      --slate-200: #d8e0ea;
+      --slate-500: #64748b;
+      --slate-800: #1f2937;
+      --white: #ffffff;
+      --shadow: 0 18px 48px rgba(2, 8, 23, .24);
+      --radius-xl: 22px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      color: #061222;
+      background:
+        radial-gradient(circle at 20% -10%, rgba(47,128,237,.35), transparent 34rem),
+        radial-gradient(circle at 80% 0%, rgba(34,197,94,.2), transparent 34rem),
+        linear-gradient(180deg, #071827 0%, #071827 310px, #edf5fb 310px, #edf5fb 100%);
+      overflow-x: hidden;
+    }
+
+    body.presentation {
+      background:
+        radial-gradient(circle at 15% -8%, rgba(47,128,237,.38), transparent 34rem),
+        radial-gradient(circle at 90% 0%, rgba(34,197,94,.24), transparent 32rem),
+        linear-gradient(180deg, #071827 0%, #071827 250px, #f1f7fc 250px, #f1f7fc 100%);
+    }
+
+    .app {
+      width: min(1880px, calc(100% - 24px));
+      margin: 0 auto;
+      padding: 10px 0 28px;
+    }
+
+    .topbar {
+      color: #eaf6ff;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: start;
+      gap: 18px;
+      padding: 0 4px 12px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 9px;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 900;
+      color: #a7d5ff;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 6px 0 3px;
+      font-size: clamp(32px, 4.3vw, 58px);
+      line-height: .96;
+      letter-spacing: -.06em;
+      text-shadow: 0 8px 26px rgba(0,0,0,.22);
+    }
+
+    .subtitle {
+      margin: 0;
+      color: #b9d4ea;
+      font-size: clamp(14px, 1.5vw, 18px);
+      font-weight: 600;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+      padding-top: 20px;
+    }
+
+    button, .file-label {
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 16px;
+      padding: 13px 18px;
+      font-size: 16px;
+      font-weight: 950;
+      cursor: pointer;
+      min-height: 48px;
+      display: inline-flex;
+      gap: 9px;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 24px rgba(0,0,0,.18);
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+      user-select: none;
+    }
+
+    button:hover, .file-label:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(0,0,0,.22);
+    }
+
+    .file-label {
+      background: #e9f6ff;
+      color: #071827;
+    }
+
+    .file-label input {
+      display: none;
+    }
+
+    .btn-dark {
+      background: rgba(255,255,255,.10);
+      color: #eef8ff;
+    }
+
+    .btn-yellow {
+      color: #08131f;
+      background: linear-gradient(135deg, #f9ef55, #32d36a);
+    }
+
+    .btn-ghost {
+      color: #eef8ff;
+      background: rgba(255,255,255,.12);
+    }
+
+    .btn-danger {
+      color: #fff;
+      background: linear-gradient(135deg, #ef4444, #be123c);
+    }
+
+    .scorecards {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .scorecard {
+      background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(231,238,247,.95));
+      border: 1px solid rgba(255,255,255,.52);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 14px 30px rgba(3, 10, 18, .22);
+      padding: 12px 15px;
+      min-height: 66px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .scorecard:after {
+      content: "";
+      position: absolute;
+      inset: auto -30px -44px auto;
+      width: 110px;
+      height: 110px;
+      background: radial-gradient(circle, rgba(47,128,237,.13), transparent 70%);
+      border-radius: 999px;
+    }
+
+    .scorecard span {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+      color: #2b405a;
+      font-size: 13px;
+      font-weight: 950;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .scorecard b {
+      display: block;
+      margin-top: 5px;
+      font-size: clamp(18px, 1.55vw, 24px);
+      letter-spacing: -.035em;
+      color: #061222;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .spotlight {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(420px, .95fr);
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .panel {
+      background: rgba(255,255,255,.96);
+      border: 1px solid rgba(15, 23, 42, .08);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 18px 10px;
+      border-bottom: 1px solid rgba(15, 23, 42, .08);
+      background: linear-gradient(180deg, #fff, #f7fbff);
+    }
+
+    .panel-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 1000;
+      letter-spacing: -.02em;
+    }
+
+    .panel-subtitle {
+      margin: 2px 0 0;
+      color: #50627a;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .accent-green {
+      border-left: 9px solid var(--green-500);
+    }
+
+    .accent-red {
+      border-left: 9px solid var(--red-500);
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 16px;
+      padding: 10px 16px 18px;
+    }
+
+    .mini-row {
+      display: grid;
+      grid-template-columns: 44px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      min-height: 39px;
+      border-bottom: 1px solid #eef2f6;
+      animation: riseIn .45s both;
+    }
+
+    .mini-row .pos {
+      font-size: 18px;
+      font-weight: 1000;
+      letter-spacing: -.02em;
+    }
+
+    .mini-row .name {
+      font-weight: 950;
+      text-transform: uppercase;
+      font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .mini-row .qty {
+      font-weight: 1000;
+      font-size: 20px;
+      letter-spacing: -.04em;
+    }
+
+    .tabs-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin: 6px 0;
+    }
+
+    .tabs {
+      display: inline-flex;
+      gap: 8px;
+      padding: 4px;
+      border-radius: 999px;
+      background: rgba(3, 13, 25, .48);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+    }
+
+    .tab {
+      border: 0;
+      min-height: 0;
+      box-shadow: none;
+      padding: 9px 15px;
+      border-radius: 999px;
+      background: transparent;
+      color: #d7eaff;
+      font-size: 14px;
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, #e6f7ff, #f5f871);
+      color: #061222;
+    }
+
+    .auto-note {
+      color: #b6cce2;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.08);
+      padding: 8px 13px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .ranking-panel {
+      border-radius: var(--radius-xl);
+      background: #ffffff;
+      box-shadow: 0 20px 55px rgba(15,23,42,.24);
+      overflow: hidden;
+      border: 1px solid rgba(15,23,42,.08);
+    }
+
+    .ranking-head {
+      padding: 14px 16px 8px;
+      background: linear-gradient(90deg, #f9fdff, #e9f6ff);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: end;
+      border-bottom: 1px solid #dbe5f0;
+    }
+
+    .ranking-head h2 {
+      margin: 0;
+      font-size: clamp(26px, 2.5vw, 38px);
+      letter-spacing: -.06em;
+      line-height: 1;
+    }
+
+    .ranking-head p {
+      margin: 4px 0 0;
+      color: #465b75;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .filters input, .filters select {
+      border: 1px solid #d1dce9;
+      border-radius: 999px;
+      height: 40px;
+      padding: 0 13px;
+      font: inherit;
+      font-weight: 800;
+      color: #0f1f34;
+      background: white;
+      min-width: 170px;
+      outline: none;
+    }
+
+    .period-filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
+      grid-column: 1 / -1;
+    }
+
+    .period-filter label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #344054;
+      font-size: 12px;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .period-filter input[type="date"] {
+      min-width: 150px;
+      padding: 0 10px;
+    }
+
+    .period-filter .mini-button {
+      min-height: 40px;
+      height: 40px;
+      padding: 0 13px;
+      border-radius: 999px;
+      border: 1px solid #d1dce9;
+      box-shadow: none;
+      background: #ffffff;
+      color: #102033;
+      font-size: 13px;
+    }
+
+    .period-filter .mini-button.active {
+      background: linear-gradient(135deg, #dff7ff, #f5f871);
+      border-color: #b9d8ea;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 9px 13px;
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .pill-green {
+      color: #03613f;
+      background: #bef5d1;
+    }
+
+    .pill-red {
+      color: #b42318;
+      background: #ffd5d2;
+    }
+
+    .pill-blue {
+      color: #1747dd;
+      background: #dbeafe;
+    }
+
+    .rank-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+
+    .rank-column {
+      overflow-x: auto;
+      min-height: 430px;
+    }
+
+    .rank-column + .rank-column {
+      border-left: 1px solid #d9e2ed;
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: clamp(12px, .82vw, 15px);
+    }
+
+    th {
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      font-size: 11px;
+      color: #476078;
+      background: #f6f9fd;
+      border-bottom: 1px solid #dce6f1;
+      text-align: left;
+      padding: 8px 12px;
+    }
+
+    td {
+      border-bottom: 1px solid #e4ebf3;
+      padding: 8px 12px;
+      height: 35px;
+      font-weight: 900;
+    }
+
+    tr {
+      transition: background .22s ease, transform .22s ease;
+      animation: tableIn .36s both;
+    }
+
+    tr:hover {
+      background: #f6fbff;
+    }
+
+    .g6 {
+      background: linear-gradient(90deg, #e9fff2, #f7fffa);
+    }
+
+    .z4 {
+      background: linear-gradient(90deg, #fff0f0, #fff9f9);
+    }
+
+    .pos-cell {
+      width: 64px;
+      font-size: 16px;
+      font-weight: 1000;
+      white-space: nowrap;
+    }
+
+    .medal {
+      display: inline-flex;
+      width: 18px;
+      height: 18px;
+      align-items: center;
+      justify-content: center;
+      margin-left: 4px;
+      border-radius: 50%;
+      font-size: 11px;
+      color: #fff;
+      vertical-align: middle;
+    }
+
+    .gold { background: #f59e0b; }
+    .silver { background: #94a3b8; }
+    .bronze { background: #c08457; }
+
+    .tech {
+      text-transform: uppercase;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .squad {
+      text-align: center;
+      width: 70px;
+    }
+
+    .squad-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 31px;
+      height: 25px;
+      padding: 0 8px;
+      border-radius: 9px;
+      color: #fff;
+      background: #101f35;
+      box-shadow: inset 0 -2px 0 rgba(255,255,255,.12);
+      font-size: 12px;
+      font-weight: 1000;
+    }
+
+    .num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      font-size: 16px;
+      font-weight: 1000;
+    }
+
+    .move {
+      text-align: center;
+      width: 95px;
+    }
+
+    .move-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 1000;
+      background: #dceafe;
+      color: #1747dd;
+    }
+
+    .status {
+      width: 96px;
+      text-align: center;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 68px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 1000;
+    }
+
+    .status-g6 {
+      color: #057548;
+      background: #bff5d3;
+    }
+
+    .status-z4 {
+      color: #b42318;
+      background: #ffd2cf;
+    }
+
+    .status-meio {
+      color: #344054;
+      background: #e8eef6;
+    }
+
+    .empty {
+      padding: 34px;
+      text-align: center;
+      color: #52657d;
+      font-weight: 850;
+    }
+
+    .message {
+      display: none;
+      margin: 8px 0 0;
+      padding: 12px 14px;
+      border-radius: 16px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.info {
+      background: #e9f7ff;
+      color: #075985;
+      border: 1px solid #b7e4ff;
+    }
+
+    .message.error {
+      background: #fff0f0;
+      color: #991b1b;
+      border: 1px solid #ffcaca;
+    }
+
+    .presentation {
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .presentation .app {
+      width: min(1920px, calc(100% - 8px));
+      height: 100vh;
+      padding: 6px 0;
+      display: grid;
+      grid-template-rows: auto auto auto auto 1fr;
+      gap: 6px;
+      overflow: hidden;
+    }
+
+    .presentation .topbar {
+      padding: 0 4px;
+      align-items: center;
+    }
+
+    .presentation h1 {
+      font-size: clamp(28px, 3vw, 48px);
+      margin: 2px 0 0;
+      line-height: .9;
+    }
+
+    .presentation .subtitle {
+      display: none;
+    }
+
+    .presentation .eyebrow {
+      font-size: 11px;
+    }
+
+    .presentation .actions,
+    .presentation .filters,
+    .presentation .period-filter,
+    .presentation .message {
+      display: none !important;
+    }
+
+    .presentation .scorecards {
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-bottom: 0;
+    }
+
+    .presentation .scorecard {
+      min-height: 48px;
+      padding: 7px 10px;
+      border-radius: 13px;
+    }
+
+    .presentation .scorecard span {
+      font-size: 10px;
+      margin: 0;
+    }
+
+    .presentation .scorecard b {
+      font-size: clamp(15px, 1.15vw, 21px);
+      margin-top: 2px;
+    }
+
+    .presentation .spotlight {
+      grid-template-columns: 1.35fr .95fr;
+      gap: 6px;
+      margin-bottom: 0;
+      min-height: 0;
+    }
+
+    .presentation .panel {
+      border-radius: 14px;
+      min-height: 0;
+    }
+
+    .presentation .panel-header {
+      padding: 7px 10px 5px;
+    }
+
+    .presentation .panel-title {
+      font-size: 14px;
+    }
+
+    .presentation .panel-subtitle {
+      display: none;
+    }
+
+    .presentation .mini-grid {
+      padding: 4px 10px 7px;
+      gap: 0 10px;
+    }
+
+    .presentation .mini-row {
+      min-height: 28px;
+      grid-template-columns: 36px 1fr auto;
+    }
+
+    .presentation .mini-row .pos {
+      font-size: 14px;
+    }
+
+    .presentation .mini-row .name {
+      font-size: 11px;
+    }
+
+    .presentation .mini-row .qty {
+      font-size: 15px;
+    }
+
+    .presentation .tabs-bar {
+      margin: 0;
+      min-height: 34px;
+    }
+
+    .presentation .tabs {
+      padding: 3px;
+      gap: 4px;
+    }
+
+    .presentation .tab {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .presentation .auto-note {
+      padding: 6px 10px;
+      font-size: 11px;
+    }
+
+    .presentation .ranking-panel {
+      min-height: 0;
+      height: 100%;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      border-radius: 16px;
+    }
+
+    .presentation .ranking-head {
+      padding: 5px 10px 4px;
+    }
+
+    .presentation .ranking-head h2 {
+      font-size: clamp(18px, 1.65vw, 30px);
+    }
+
+    .presentation .ranking-head p {
+      font-size: 10px;
+      margin-top: 1px;
+    }
+
+    .presentation .rank-columns {
+      min-height: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .presentation .rank-column {
+      min-height: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .presentation table {
+      min-width: 0;
+      width: 100%;
+      font-size: clamp(10px, .72vw, 15px);
+    }
+
+    .presentation th {
+      padding: 3px 6px;
+      font-size: 8px;
+      line-height: 1.05;
+    }
+
+    .presentation td {
+      height: var(--tv-row-height, 22px);
+      padding: 2px 6px;
+      line-height: 1.05;
+    }
+
+    .presentation .pos-cell {
+      width: 52px;
+      font-size: 12px;
+    }
+
+    .presentation .tech {
+      font-size: 11px;
+    }
+
+    .presentation .squad {
+      width: 56px;
+    }
+
+    .presentation .squad-badge {
+      min-width: 26px;
+      height: 20px;
+      font-size: 10px;
+      border-radius: 7px;
+    }
+
+    .presentation .num {
+      width: 64px;
+      font-size: 12px;
+    }
+
+    .presentation .move {
+      width: 68px;
+    }
+
+    .presentation .move-badge {
+      padding: 2px 6px;
+      font-size: 9px;
+    }
+
+    .presentation .status {
+      width: 70px;
+    }
+
+    .presentation .status-badge {
+      min-width: 54px;
+      padding: 2px 5px;
+      font-size: 9px;
+    }
+
+    .presentation .medal {
+      width: 14px;
+      height: 14px;
+      font-size: 9px;
+    }
+
+    .presentation.tv-force-ranking .spotlight {
+      display: grid;
+      grid-template-columns: 1.25fr .95fr;
+      gap: 5px;
+      margin-bottom: 0;
+      min-height: 0;
+    }
+
+    .presentation.tv-force-ranking .spotlight .panel {
+      border-radius: 12px;
+      min-height: 0;
+    }
+
+    .presentation.tv-force-ranking .spotlight .panel-header {
+      padding: 5px 8px 3px;
+    }
+
+    .presentation.tv-force-ranking .spotlight .panel-title {
+      font-size: 12px;
+    }
+
+    .presentation.tv-force-ranking .spotlight .panel-subtitle {
+      display: none;
+    }
+
+    .presentation.tv-force-ranking .spotlight .pill {
+      padding: 5px 8px;
+      font-size: 11px;
+    }
+
+    .presentation.tv-force-ranking .spotlight .mini-grid {
+      padding: 2px 8px 5px;
+      gap: 0 8px;
+    }
+
+    .presentation.tv-force-ranking .spotlight .mini-row {
+      min-height: 22px;
+      grid-template-columns: 30px 1fr auto;
+    }
+
+    .presentation.tv-force-ranking .spotlight .mini-row .pos {
+      font-size: 12px;
+    }
+
+    .presentation.tv-force-ranking .spotlight .mini-row .name {
+      font-size: 10px;
+    }
+
+    .presentation.tv-force-ranking .spotlight .mini-row .qty {
+      font-size: 12px;
+    }
+
+    .presentation.tv-force-ranking .app {
+      grid-template-rows: auto auto auto auto 1fr;
+      gap: 3px;
+      padding: 3px 0;
+    }
+
+    .presentation.tv-force-ranking .topbar {
+      min-height: 0;
+    }
+
+    .presentation.tv-force-ranking h1 {
+      font-size: clamp(24px, 2.45vw, 40px);
+      line-height: .86;
+      margin: 0;
+    }
+
+    .presentation.tv-force-ranking .eyebrow {
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    .presentation.tv-force-ranking .scorecards {
+      gap: 5px;
+    }
+
+    .presentation.tv-force-ranking .scorecard {
+      min-height: 38px;
+      padding: 5px 9px;
+      border-radius: 11px;
+    }
+
+    .presentation.tv-force-ranking .scorecard span {
+      font-size: 9px;
+      line-height: 1;
+    }
+
+    .presentation.tv-force-ranking .scorecard b {
+      font-size: clamp(13px, 1vw, 17px);
+      margin-top: 1px;
+    }
+
+    .presentation.tv-force-ranking .tabs-bar {
+      min-height: 27px;
+    }
+
+    .presentation.tv-force-ranking .tabs {
+      padding: 2px;
+    }
+
+    .presentation.tv-force-ranking .tab {
+      padding: 4px 10px;
+      font-size: 11px;
+    }
+
+    .presentation.tv-force-ranking .auto-note {
+      display: none;
+    }
+
+    .presentation.tv-force-ranking .ranking-head {
+      padding: 4px 9px 3px;
+    }
+
+    .presentation.tv-force-ranking .ranking-head h2 {
+      font-size: clamp(18px, 1.5vw, 28px);
+    }
+
+    .presentation.tv-force-ranking .ranking-head p {
+      display: none;
+    }
+
+    .presentation.tv-force-ranking th {
+      padding: 2px 5px;
+      font-size: 7px;
+    }
+
+    .presentation.tv-force-ranking td {
+      height: var(--tv-row-height, 20px);
+      padding: 1px 5px;
+      line-height: 1;
+    }
+
+    .presentation.tv-force-ranking .pos-cell,
+    .presentation.tv-force-ranking .tech,
+    .presentation.tv-force-ranking .num {
+      font-size: clamp(9px, .64vw, 12px);
+    }
+
+    .presentation.tv-force-ranking .squad-badge {
+      min-width: 24px;
+      height: 18px;
+      font-size: 9px;
+    }
+
+    .presentation.tv-force-ranking .move-badge,
+    .presentation.tv-force-ranking .status-badge {
+      font-size: 8px;
+      padding: 1px 5px;
+    }
+
+    .presentation.tv-force-ranking .medal {
+      width: 13px;
+      height: 13px;
+      font-size: 8px;
+    }
+
+    .presentation.tv-ultra-compact .spotlight {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      margin-bottom: 0;
+    }
+
+    .presentation.tv-ultra-compact .spotlight .panel-header {
+      padding: 4px 7px 2px;
+    }
+
+    .presentation.tv-ultra-compact .spotlight .panel-title {
+      font-size: 11px;
+    }
+
+    .presentation.tv-ultra-compact .spotlight .pill {
+      padding: 4px 7px;
+      font-size: 10px;
+    }
+
+    .presentation.tv-ultra-compact .spotlight .mini-grid {
+      grid-template-columns: 1fr 1fr;
+      padding: 1px 7px 4px;
+    }
+
+    .presentation.tv-ultra-compact .spotlight .mini-row {
+      min-height: 19px;
+    }
+
+    .presentation.tv-ultra-compact .spotlight .mini-row .pos,
+    .presentation.tv-ultra-compact .spotlight .mini-row .qty {
+      font-size: 10px;
+    }
+
+    .presentation.tv-ultra-compact .spotlight .mini-row .name {
+      font-size: 9px;
+    }
+
+    .presentation.tv-ultra-compact .app {
+      grid-template-rows: auto auto auto auto 1fr;
+    }
+
+    .presentation.tv-ultra-compact .scorecard {
+      min-height: 40px;
+      padding: 5px 8px;
+    }
+
+    .presentation.tv-ultra-compact .scorecard span {
+      font-size: 9px;
+    }
+
+    .presentation.tv-ultra-compact .scorecard b {
+      font-size: clamp(13px, 1vw, 18px);
+    }
+
+    .presentation.tv-ultra-compact .tabs-bar {
+      min-height: 28px;
+    }
+
+    .presentation.tv-ultra-compact .tab {
+      padding: 4px 10px;
+      font-size: 11px;
+    }
+
+    .presentation.tv-ultra-compact .auto-note {
+      display: none;
+    }
+
+    .presentation.tv-ultra-compact td {
+      padding-top: 1px;
+      padding-bottom: 1px;
+      font-size: 10px;
+    }
+
+    .presentation.tv-ultra-compact .tech,
+    .presentation.tv-ultra-compact .num,
+    .presentation.tv-ultra-compact .pos-cell {
+      font-size: 10px;
+    }
+
+    .presentation.tv-ultra-compact .move,
+    .presentation.tv-ultra-compact .status {
+      display: none;
+    }
+
+    .presentation.tv-ultra-compact th:nth-child(5),
+    .presentation.tv-ultra-compact th:nth-child(6),
+    .presentation.tv-ultra-compact td:nth-child(5),
+    .presentation.tv-ultra-compact td:nth-child(6) {
+      display: none;
+    }
+
+    .presentation.tv-mega-compact .scorecards {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 3px;
+      margin-bottom: 0;
+    }
+
+    .presentation.tv-mega-compact .scorecard {
+      min-height: 30px;
+      padding: 3px 6px;
+      border-radius: 9px;
+    }
+
+    .presentation.tv-mega-compact .scorecard span {
+      font-size: 7px;
+      line-height: 1;
+    }
+
+    .presentation.tv-mega-compact .scorecard b {
+      font-size: clamp(10px, .8vw, 14px);
+      margin-top: 0;
+    }
+
+    .presentation.tv-mega-compact .app {
+      grid-template-rows: auto auto auto auto 1fr;
+    }
+
+    .presentation.tv-mega-compact .spotlight {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px;
+      margin-bottom: 0;
+    }
+
+    .presentation.tv-mega-compact .spotlight .panel {
+      border-radius: 9px;
+    }
+
+    .presentation.tv-mega-compact .spotlight .panel-header {
+      padding: 3px 6px 1px;
+    }
+
+    .presentation.tv-mega-compact .spotlight .panel-title {
+      font-size: 10px;
+    }
+
+    .presentation.tv-mega-compact .spotlight .pill {
+      padding: 3px 6px;
+      font-size: 8px;
+    }
+
+    .presentation.tv-mega-compact .spotlight .mini-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      padding: 0 6px 3px;
+      gap: 0 5px;
+    }
+
+    .presentation.tv-mega-compact .spotlight .mini-row {
+      min-height: 16px;
+      grid-template-columns: 24px 1fr auto;
+    }
+
+    .presentation.tv-mega-compact .spotlight .mini-row .pos,
+    .presentation.tv-mega-compact .spotlight .mini-row .qty {
+      font-size: 8px;
+    }
+
+    .presentation.tv-mega-compact .spotlight .mini-row .name {
+      font-size: 8px;
+    }
+
+    .presentation.tv-mega-compact .ranking-head p {
+      display: none;
+    }
+
+    .presentation.tv-mega-compact .tabs-bar {
+      min-height: 24px;
+    }
+
+    .presentation.tv-mega-compact .tab {
+      padding: 3px 9px;
+      font-size: 10px;
+    }
+
+    .presentation.tv-mega-compact th {
+      padding-top: 2px;
+      padding-bottom: 2px;
+      font-size: 7px;
+    }
+
+    .presentation.tv-mega-compact td {
+      font-size: 9px;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .presentation.tv-mega-compact .squad {
+      display: none;
+    }
+
+    .presentation.tv-mega-compact th:nth-child(3),
+    .presentation.tv-mega-compact td:nth-child(3) {
+      display: none;
+    }
+
+    @media (max-width: 1180px) {
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        justify-content: flex-start;
+        padding-top: 0;
+      }
+
+      .scorecards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .spotlight {
+        grid-template-columns: 1fr;
+      }
+
+      .rank-columns {
+        grid-template-columns: 1fr;
+      }
+
+      .rank-column + .rank-column {
+        border-left: 0;
+        border-top: 1px solid #d9e2ed;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body {
+        background:
+          radial-gradient(circle at 20% -10%, rgba(47,128,237,.35), transparent 28rem),
+          linear-gradient(180deg, #071827 0%, #071827 420px, #edf5fb 420px, #edf5fb 100%);
+      }
+
+      .app {
+        width: min(100% - 16px, 1880px);
+      }
+
+      .scorecards {
+        grid-template-columns: 1fr;
+      }
+
+      .mini-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .ranking-head {
+        grid-template-columns: 1fr;
+      }
+
+      .filters {
+        justify-content: flex-start;
+      }
+
+      .filters input, .filters select {
+        width: 100%;
+      }
+
+      button, .file-label {
+        width: 100%;
+      }
+    }
+
+    @keyframes tableIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes riseIn {
+      from {
+        opacity: 0;
+        transform: translateY(7px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *:before, *:after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">🏆 TV Ranking • Estilo transmissão</div>
+        <h1>Brasileirão do Atendimento</h1>
+        <p class="subtitle">Ranking animado por rodadas, com G6, Z4, movimentação de posições e modo apresentação para TV.</p>
+        <div id="message" class="message"></div>
+      </div>
+
+      <div class="actions">
+        <label class="file-label">
+          ⬆️ Importar Excel/CSV
+          <input id="fileInput" type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
+        </label>
+        <button class="btn-dark" id="reloadSavedBtn" type="button">🔄 Recarregar</button>
+        <button class="btn-yellow" id="presentationBtn" type="button">🖥️ Modo apresentação</button>
+        <button class="btn-ghost" id="layoutBtn" type="button">2 colunas</button>
+        <button class="btn-danger" id="clearBtn" type="button">🗑️ Limpar</button>
+      </div>
+    </header>
+
+    <section class="scorecards">
+      <article class="scorecard">
+        <span>📅 Data do dia</span>
+        <b id="dayCard">-</b>
+      </article>
+      <article class="scorecard">
+        <span>🔄 Rodadas</span>
+        <b id="roundsCard">0</b>
+      </article>
+      <article class="scorecard">
+        <span>🥇 Líder do dia</span>
+        <b id="dayLeaderCard">-</b>
+      </article>
+      <article class="scorecard">
+        <span>🏆 Líder geral</span>
+        <b id="overallLeaderCard">-</b>
+      </article>
+      <article class="scorecard">
+        <span>📤 Arquivo</span>
+        <b id="fileCard">Nenhum</b>
+      </article>
+    </section>
+
+    <section class="spotlight">
+      <article class="panel accent-green">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">G6 em destaque</h2>
+            <p class="panel-subtitle">Os 6 melhores da classificação atual.</p>
+          </div>
+          <span class="pill pill-green">G6</span>
+        </div>
+        <div id="g6Box" class="mini-grid"></div>
+      </article>
+
+      <article class="panel accent-red">
+        <div class="panel-header">
+          <div>
+            <h2 class="panel-title">Z4 Zona de Risco</h2>
+            <p class="panel-subtitle">Os 4 últimos da classificação atual.</p>
+          </div>
+          <span class="pill pill-red">Z4</span>
+        </div>
+        <div id="z4Box" class="mini-grid"></div>
+      </article>
+    </section>
+
+    <nav class="tabs-bar">
+      <div class="tabs">
+        <button class="tab" id="dayTab" type="button">Classificação do dia</button>
+        <button class="tab active" id="generalTab" type="button">Classificação geral</button>
+      </div>
+      <div class="auto-note" id="autoNote">Alternância automática: 30s • 2 colunas</div>
+    </nav>
+
+    <section class="ranking-panel">
+      <div class="ranking-head">
+        <div>
+          <h2 id="rankingTitle">Classificação geral</h2>
+          <p id="rankingSubtitle">Soma as rodadas do período filtrado, estilo pontos corridos.</p>
+        </div>
+
+        <div class="filters">
+          <input id="searchInput" type="search" placeholder="Buscar técnico...">
+          <select id="groupFilter">
+            <option value="">Todos os grupos</option>
+          </select>
+          <div class="period-filter">
+            <button class="mini-button active" id="currentMonthBtn" type="button">Mês atual</button>
+            <button class="mini-button" id="previousMonthBtn" type="button">Mês anterior</button>
+            <button class="mini-button" id="allPeriodBtn" type="button">Tudo</button>
+            <label>De <input id="startDateInput" type="date"></label>
+            <label>Até <input id="endDateInput" type="date"></label>
+            <button class="mini-button" id="applyPeriodBtn" type="button">Aplicar</button>
+          </div>
+          <span class="pill pill-green">G6</span>
+          <span class="pill pill-red">Z4</span>
+          <span class="pill pill-blue">↕ Movimento</span>
+        </div>
+      </div>
+
+      <div id="rankingColumns" class="rank-columns">
+        <div id="leftTable" class="rank-column"></div>
+        <div id="rightTable" class="rank-column"></div>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    const STORAGE_KEY = "brasileirao-atendimento-ranking-v2";
+    const EXCLUDED_TECHNICIANS = [
+      "Jose Eduardo Pagnossim",
+      "Heitor Drago",
+      "João Paulo Cardoso",
+      "Eduardo Thomaz"
+    ].map(normalizeName);
+
+    const state = {
+      fileName: "",
+      importedAt: "",
+      rows: [],
+      rounds: [],
+      groups: [],
+      overall: [],
+      lastDay: [],
+      activeMode: "general",
+      twoColumns: true,
+      autoSwitch: true,
+      periodMode: "currentMonth",
+      startDate: "",
+      endDate: ""
+    };
+
+    const els = {
+      fileInput: document.getElementById("fileInput"),
+      message: document.getElementById("message"),
+      dayCard: document.getElementById("dayCard"),
+      roundsCard: document.getElementById("roundsCard"),
+      dayLeaderCard: document.getElementById("dayLeaderCard"),
+      overallLeaderCard: document.getElementById("overallLeaderCard"),
+      fileCard: document.getElementById("fileCard"),
+      g6Box: document.getElementById("g6Box"),
+      z4Box: document.getElementById("z4Box"),
+      dayTab: document.getElementById("dayTab"),
+      generalTab: document.getElementById("generalTab"),
+      rankingTitle: document.getElementById("rankingTitle"),
+      rankingSubtitle: document.getElementById("rankingSubtitle"),
+      rankingColumns: document.getElementById("rankingColumns"),
+      leftTable: document.getElementById("leftTable"),
+      rightTable: document.getElementById("rightTable"),
+      searchInput: document.getElementById("searchInput"),
+      groupFilter: document.getElementById("groupFilter"),
+      currentMonthBtn: document.getElementById("currentMonthBtn"),
+      previousMonthBtn: document.getElementById("previousMonthBtn"),
+      allPeriodBtn: document.getElementById("allPeriodBtn"),
+      startDateInput: document.getElementById("startDateInput"),
+      endDateInput: document.getElementById("endDateInput"),
+      applyPeriodBtn: document.getElementById("applyPeriodBtn"),
+      reloadSavedBtn: document.getElementById("reloadSavedBtn"),
+      presentationBtn: document.getElementById("presentationBtn"),
+      layoutBtn: document.getElementById("layoutBtn"),
+      clearBtn: document.getElementById("clearBtn"),
+      autoNote: document.getElementById("autoNote")
+    };
+
+    init();
+
+    function init() {
+      els.fileInput.addEventListener("change", event => {
+        const file = event.target.files && event.target.files[0];
+        if (file) readFile(file);
+        event.target.value = "";
+      });
+
+      els.searchInput.addEventListener("input", renderAll);
+      els.groupFilter.addEventListener("change", renderAll);
+
+      els.currentMonthBtn.addEventListener("click", () => setPeriodMode("currentMonth"));
+      els.previousMonthBtn.addEventListener("click", () => setPeriodMode("previousMonth"));
+      els.allPeriodBtn.addEventListener("click", () => setPeriodMode("all"));
+      els.applyPeriodBtn.addEventListener("click", () => {
+        state.periodMode = "custom";
+        state.startDate = els.startDateInput.value;
+        state.endDate = els.endDateInput.value;
+        rebuildRankingsFromPeriod();
+        renderAll();
+      });
+      els.startDateInput.addEventListener("change", () => {
+        state.periodMode = "custom";
+        state.startDate = els.startDateInput.value;
+        state.endDate = els.endDateInput.value;
+        rebuildRankingsFromPeriod();
+        renderAll();
+      });
+      els.endDateInput.addEventListener("change", () => {
+        state.periodMode = "custom";
+        state.startDate = els.startDateInput.value;
+        state.endDate = els.endDateInput.value;
+        rebuildRankingsFromPeriod();
+        renderAll();
+      });
+
+      els.dayTab.addEventListener("click", () => setMode("day"));
+      els.generalTab.addEventListener("click", () => setMode("general"));
+
+      els.reloadSavedBtn.addEventListener("click", () => {
+        const ok = loadFromStorage();
+        showMessage(ok ? "Dados salvos carregados com sucesso." : "Nenhum arquivo salvo encontrado neste navegador.", ok ? "info" : "error");
+      });
+
+      els.presentationBtn.addEventListener("click", async () => {
+        const entering = !document.body.classList.contains("presentation");
+
+        if (entering) {
+          await enterPresentation();
+        } else {
+          await exitPresentation();
+        }
+      });
+
+      document.addEventListener("fullscreenchange", () => {
+        if (!document.fullscreenElement && document.body.classList.contains("presentation")) {
+          exitPresentation(false);
+        }
+      });
+
+      els.layoutBtn.addEventListener("click", () => {
+        state.twoColumns = !state.twoColumns;
+        els.layoutBtn.textContent = state.twoColumns ? "2 colunas" : "1 coluna";
+        renderAll();
+      });
+
+      els.clearBtn.addEventListener("click", () => {
+        localStorage.removeItem(STORAGE_KEY);
+        resetState();
+        renderAll();
+        showMessage("Dados removidos deste navegador.", "info");
+      });
+
+      window.addEventListener("keydown", event => {
+        if (event.key === "Escape" && document.body.classList.contains("presentation")) {
+          event.preventDefault();
+          exitPresentation();
+        }
+
+        if (event.key.toLowerCase() === "p") {
+          const entering = !document.body.classList.contains("presentation");
+          if (entering) {
+            enterPresentation();
+          } else {
+            exitPresentation();
+          }
+        }
+        if (event.key.toLowerCase() === "d") {
+          setMode("day");
+        }
+        if (event.key.toLowerCase() === "g") {
+          setMode("general");
+        }
+      });
+
+      window.addEventListener("resize", () => {
+        if (document.body.classList.contains("presentation")) {
+          renderAll();
+        }
+      });
+
+      setInterval(() => {
+        if (!state.autoSwitch || document.activeElement === els.searchInput) return;
+        state.activeMode = state.activeMode === "general" ? "day" : "general";
+        renderAll();
+      }, 30000);
+
+      const loaded = loadFromStorage();
+      if (!loaded) renderAll();
+    }
+
+    async function readFile(file) {
+      try {
+        const extension = file.name.split(".").pop().toLowerCase();
+
+        let rows;
+        if (extension === "xlsx" || extension === "xls") {
+          rows = await readExcel(file);
+        } else {
+          const text = await file.text();
+          rows = parseCSV(text);
+        }
+
+        const processed = processRows(rows);
+        if (!processed.rows.length) {
+          throw new Error("Nenhum registro válido sobrou após aplicar os filtros.");
+        }
+
+        state.fileName = file.name;
+        state.importedAt = new Date().toISOString();
+        state.rows = processed.rows;
+        state.groups = processed.groups;
+        setPeriodMode("currentMonth", false);
+        rebuildRankingsFromPeriod();
+
+        saveToStorage();
+        renderAll();
+        showMessage(`Arquivo importado com sucesso. ${state.rows.length.toLocaleString("pt-BR")} registros válidos considerados.`, "info");
+      } catch (error) {
+        console.error(error);
+        showMessage(error.message || "Não foi possível importar o arquivo.", "error");
+      }
+    }
+
+    function readExcel(file) {
+      return new Promise((resolve, reject) => {
+        if (!window.XLSX) {
+          reject(new Error("Biblioteca de Excel não carregada. Verifique a conexão com a internet ou importe CSV."));
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = event => {
+          try {
+            const data = new Uint8Array(event.target.result);
+            const workbook = XLSX.read(data, { type: "array", cellDates: true });
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(firstSheet, { defval: "" });
+            resolve(rows);
+          } catch (error) {
+            reject(error);
+          }
+        };
+        reader.onerror = () => reject(new Error("Não foi possível ler a planilha."));
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    function parseCSV(text) {
+      const separator = detectCSVSeparator(text);
+      const lines = [];
+      let row = [];
+      let field = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const next = text[i + 1];
+
+        if (char === '"') {
+          if (inQuotes && next === '"') {
+            field += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === separator && !inQuotes) {
+          row.push(field);
+          field = "";
+        } else if ((char === "\n" || char === "\r") && !inQuotes) {
+          if (char === "\r" && next === "\n") i++;
+          row.push(field);
+          if (row.some(value => String(value).trim() !== "")) lines.push(row);
+          row = [];
+          field = "";
+        } else {
+          field += char;
+        }
+      }
+
+      row.push(field);
+      if (row.some(value => String(value).trim() !== "")) lines.push(row);
+      if (!lines.length) return [];
+
+      const headers = lines[0].map(cleanHeader);
+      return lines.slice(1).map(values => {
+        const object = {};
+        headers.forEach((header, index) => {
+          object[header] = values[index] ?? "";
+        });
+        return object;
+      });
+    }
+
+    function detectCSVSeparator(text) {
+      const firstLine = String(text || "").split(/\r?\n/).find(line => line.trim()) || "";
+      const commaCount = countSeparatorOutsideQuotes(firstLine, ",");
+      const semicolonCount = countSeparatorOutsideQuotes(firstLine, ";");
+      return semicolonCount > commaCount ? ";" : ",";
+    }
+
+    function countSeparatorOutsideQuotes(line, separator) {
+      let count = 0;
+      let inQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const next = line[i + 1];
+
+        if (char === '"') {
+          if (inQuotes && next === '"') {
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === separator && !inQuotes) {
+          count++;
+        }
+      }
+
+      return count;
+    }
+
+    function processRows(rawRows) {
+      if (!rawRows || !rawRows.length) {
+        throw new Error("A planilha está vazia.");
+      }
+
+      const headers = Object.keys(rawRows[0]).reduce((acc, key) => {
+        acc[normalizeHeader(key)] = key;
+        return acc;
+      }, {});
+
+      const timeKey = findColumn(headers, ["time", "data", "date", "dia"]);
+      const techKey = findColumn(headers, ["Tecnico", "Técnico", "tecnico", "technician"]);
+      const groupKey = findColumn(headers, ["grupoAtendimento", "grupo", "squad", "equipe", "group"]);
+      const quantityKey = findColumn(headers, ["Quantidade", "quantidade", "qtd", "total", "atendimentos"]);
+
+      if (!timeKey || !techKey || !groupKey || !quantityKey) {
+        throw new Error("Não encontrei as colunas obrigatórias: time, Tecnico, grupoAtendimento e Quantidade.");
+      }
+
+      const rows = rawRows.map(row => {
+        const date = parseDateOnly(row[timeKey]);
+        const technician = cleanText(row[techKey]);
+        const group = cleanText(row[groupKey]);
+        const quantity = parseQuantity(row[quantityKey]);
+
+        return { date, technician, group, quantity };
+      }).filter(row => {
+        if (!row.date || !row.technician || !row.group) return false;
+        if (!Number.isFinite(row.quantity)) return false;
+        if (EXCLUDED_TECHNICIANS.includes(normalizeName(row.technician))) return false;
+        return true;
+      });
+
+      const rounds = Array.from(new Set(rows.map(row => row.date))).sort();
+      const groups = Array.from(new Set(rows.map(row => row.group))).sort((a, b) => a.localeCompare(b, "pt-BR"));
+      const previousDate = rounds.length > 1 ? rounds[rounds.length - 2] : "";
+
+      const overall = buildOverallRanking(rows, rounds, previousDate);
+      const lastDay = buildDayRanking(rows, rounds[rounds.length - 1] || "", previousDate);
+
+      return { rows, rounds, groups, overall, lastDay };
+    }
+
+    function buildOverallRanking(rows, rounds, previousDate) {
+      const fullMap = new Map();
+      const previousMap = new Map();
+
+      rows.forEach(row => {
+        addToMap(fullMap, row, row.quantity);
+        if (previousDate && row.date <= previousDate) {
+          addToMap(previousMap, row, row.quantity);
+        }
+      });
+
+      const previousRanking = rankFromMap(previousMap);
+      const previousPosition = new Map(previousRanking.map(item => [normalizeName(item.technician), item.position]));
+
+      return rankFromMap(fullMap).map(item => ({
+        ...item,
+        movement: calculateMovement(previousPosition.get(normalizeName(item.technician)), item.position)
+      }));
+    }
+
+    function buildDayRanking(rows, date, previousDate) {
+      const dayMap = new Map();
+      const previousDayMap = new Map();
+
+      rows.forEach(row => {
+        if (row.date === date) addToMap(dayMap, row, row.quantity);
+        if (previousDate && row.date === previousDate) addToMap(previousDayMap, row, row.quantity);
+      });
+
+      const previousRanking = rankFromMap(previousDayMap);
+      const previousPosition = new Map(previousRanking.map(item => [normalizeName(item.technician), item.position]));
+
+      return rankFromMap(dayMap).map(item => ({
+        ...item,
+        date,
+        movement: calculateMovement(previousPosition.get(normalizeName(item.technician)), item.position)
+      }));
+    }
+
+    function addToMap(map, row, amount) {
+      const key = normalizeName(row.technician);
+      const current = map.get(key) || {
+        technician: row.technician,
+        group: row.group,
+        totalQuantity: 0,
+        roundsSet: new Set()
+      };
+      current.totalQuantity += amount;
+      current.roundsSet.add(row.date);
+      current.group = current.group || row.group;
+      map.set(key, current);
+    }
+
+    function rankFromMap(map) {
+      return Array.from(map.values())
+        .map(item => ({
+          technician: item.technician,
+          group: item.group,
+          totalQuantity: item.totalQuantity,
+          roundsParticipated: item.roundsSet.size,
+          averagePerRound: item.roundsSet.size ? item.totalQuantity / item.roundsSet.size : 0
+        }))
+        .sort((a, b) =>
+          b.totalQuantity - a.totalQuantity ||
+          b.averagePerRound - a.averagePerRound ||
+          a.technician.localeCompare(b.technician, "pt-BR")
+        )
+        .map((item, index) => ({ ...item, position: index + 1 }));
+    }
+
+    function calculateMovement(previousPosition, currentPosition) {
+      if (!previousPosition) return { label: "novo", value: 0, icon: "◎", className: "new" };
+      const delta = previousPosition - currentPosition;
+      if (delta > 0) return { label: `+${delta}`, value: delta, icon: "▲", className: "up" };
+      if (delta < 0) return { label: `${delta}`, value: delta, icon: "▼", className: "down" };
+      return { label: "=", value: 0, icon: "━", className: "same" };
+    }
+
+
+    async function enterPresentation() {
+      document.body.classList.add("presentation");
+      state.twoColumns = true;
+
+      try {
+        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+          await document.documentElement.requestFullscreen();
+        }
+      } catch (error) {
+        console.warn("Tela cheia não permitida pelo navegador.", error);
+      }
+
+      els.presentationBtn.textContent = "🖥️ Sair apresentação";
+      renderAll();
+      setTimeout(renderAll, 250);
+      setTimeout(renderAll, 700);
+    }
+
+    async function exitPresentation(shouldExitFullscreen = true) {
+      document.body.classList.remove("presentation", "tv-force-ranking", "tv-ultra-compact", "tv-mega-compact");
+      document.documentElement.style.removeProperty("--tv-row-height");
+      els.presentationBtn.textContent = "🖥️ Modo apresentação";
+
+      if (shouldExitFullscreen) {
+        try {
+          if (document.fullscreenElement && document.exitFullscreen) {
+            await document.exitFullscreen();
+          }
+        } catch (error) {
+          console.warn("Não foi possível sair da tela cheia.", error);
+        }
+      }
+
+      renderAll();
+    }
+
+    function setPeriodMode(mode, shouldRender = true) {
+      state.periodMode = mode;
+
+      const today = new Date();
+      let start = "";
+      let end = "";
+
+      if (mode === "currentMonth") {
+        start = toISODate(new Date(today.getFullYear(), today.getMonth(), 1));
+        end = toISODate(new Date(today.getFullYear(), today.getMonth() + 1, 0));
+      }
+
+      if (mode === "previousMonth") {
+        start = toISODate(new Date(today.getFullYear(), today.getMonth() - 1, 1));
+        end = toISODate(new Date(today.getFullYear(), today.getMonth(), 0));
+      }
+
+      if (mode === "all") {
+        start = "";
+        end = "";
+      }
+
+      if (mode !== "custom") {
+        state.startDate = start;
+        state.endDate = end;
+      }
+
+      syncPeriodInputs();
+      rebuildRankingsFromPeriod();
+
+      if (shouldRender) {
+        saveToStorage();
+        renderAll();
+      }
+    }
+
+    function syncPeriodInputs() {
+      els.startDateInput.value = state.startDate || "";
+      els.endDateInput.value = state.endDate || "";
+
+      els.currentMonthBtn.classList.toggle("active", state.periodMode === "currentMonth");
+      els.previousMonthBtn.classList.toggle("active", state.periodMode === "previousMonth");
+      els.allPeriodBtn.classList.toggle("active", state.periodMode === "all");
+      els.applyPeriodBtn.classList.toggle("active", state.periodMode === "custom");
+    }
+
+    function rebuildRankingsFromPeriod() {
+      const filteredRows = getRowsInSelectedPeriod();
+
+      const rounds = Array.from(new Set(filteredRows.map(row => row.date))).sort();
+      const previousDate = rounds.length > 1 ? rounds[rounds.length - 2] : "";
+
+      state.rounds = rounds;
+      state.overall = buildOverallRanking(filteredRows, rounds, previousDate);
+      state.lastDay = buildDayRanking(filteredRows, rounds[rounds.length - 1] || "", previousDate);
+    }
+
+    function getRowsInSelectedPeriod() {
+      return state.rows.filter(row => {
+        if (state.startDate && row.date < state.startDate) return false;
+        if (state.endDate && row.date > state.endDate) return false;
+        return true;
+      });
+    }
+
+    function toISODate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function setMode(mode) {
+      state.activeMode = mode;
+      state.autoSwitch = false;
+      renderAll();
+      setTimeout(() => state.autoSwitch = true, 60000);
+    }
+
+    function renderAll() {
+      updateCards();
+      updateTabs();
+      updateGroupFilter();
+      syncPeriodInputs();
+      renderSpotlights();
+      renderRanking();
+      els.autoNote.textContent = document.body.classList.contains("presentation")
+        ? "Esc para sair • Alternância automática: 30s"
+        : `Alternância automática: 30s • ${state.twoColumns ? "2 colunas" : "1 coluna"}`;
+    }
+
+    function updateCards() {
+      const lastDate = state.rounds[state.rounds.length - 1] || "";
+      els.dayCard.textContent = lastDate ? formatDateBR(lastDate) : "-";
+      els.roundsCard.textContent = String(state.rounds.length);
+      els.dayLeaderCard.textContent = state.lastDay[0]?.technician || "-";
+      els.overallLeaderCard.textContent = state.overall[0]?.technician || "-";
+      els.fileCard.textContent = state.fileName || "Nenhum";
+    }
+
+    function updateTabs() {
+      els.dayTab.classList.toggle("active", state.activeMode === "day");
+      els.generalTab.classList.toggle("active", state.activeMode === "general");
+
+      if (state.activeMode === "day") {
+        els.rankingTitle.textContent = "Classificação do dia";
+        els.rankingSubtitle.textContent = "Mostra somente a última rodada encontrada na planilha.";
+      } else {
+        els.rankingTitle.textContent = "Classificação geral";
+        els.rankingSubtitle.textContent = "Soma as rodadas do período filtrado, estilo pontos corridos.";
+      }
+    }
+
+    function updateGroupFilter() {
+      const current = els.groupFilter.value;
+      els.groupFilter.innerHTML = '<option value="">Todos os grupos</option>' +
+        state.groups.map(group => `<option value="${escapeHtml(group)}">${escapeHtml(group)}</option>`).join("");
+      if (state.groups.includes(current)) els.groupFilter.value = current;
+    }
+
+    function getActiveRows() {
+      const base = state.activeMode === "day" ? state.lastDay : state.overall;
+      const search = normalizeName(els.searchInput.value);
+      const group = els.groupFilter.value;
+
+      return base.filter(item => {
+        const matchesSearch = !search || normalizeName(item.technician).includes(search);
+        const matchesGroup = !group || item.group === group;
+        return matchesSearch && matchesGroup;
+      });
+    }
+
+    function renderSpotlights() {
+      const rows = state.activeMode === "day" ? state.lastDay : state.overall;
+      const g6 = rows.slice(0, 6);
+      const z4 = rows.slice(-4);
+
+      els.g6Box.innerHTML = g6.length ? g6.map(renderMiniRow).join("") : '<div class="empty">Importe uma planilha para começar.</div>';
+      els.z4Box.innerHTML = z4.length ? z4.map(renderMiniRow).join("") : '<div class="empty">Importe uma planilha para começar.</div>';
+    }
+
+    function renderMiniRow(item, index) {
+      return `
+        <div class="mini-row" style="animation-delay:${index * 40}ms">
+          <div class="pos">${item.position}º</div>
+          <div class="name">${escapeHtml(item.technician)}</div>
+          <div class="qty">${formatNumber(item.totalQuantity)}</div>
+        </div>
+      `;
+    }
+
+    function renderRanking() {
+      const rows = getActiveRows();
+
+      if (!rows.length) {
+        els.leftTable.innerHTML = state.rows.length
+          ? '<div class="empty">Nenhum dado encontrado para o período selecionado.</div>'
+          : '<div class="empty">Importe um arquivo para visualizar a classificação.</div>';
+        els.rightTable.innerHTML = "";
+        els.rankingColumns.style.gridTemplateColumns = "1fr";
+        return;
+      }
+
+      const isPresentation = document.body.classList.contains("presentation");
+
+      if (isPresentation) {
+        applyTvRowDensity(rows.length);
+
+        const half = Math.ceil(rows.length / 2);
+        const leftRows = rows.slice(0, half);
+        const rightRows = rows.slice(half);
+
+        els.rankingColumns.style.gridTemplateColumns = "1fr 1fr";
+        els.leftTable.innerHTML = buildTable(leftRows);
+        els.rightTable.innerHTML = rightRows.length
+          ? buildTable(rightRows)
+          : '<div class="empty">Sem mais posições para exibir.</div>';
+        els.rightTable.style.display = "block";
+        return;
+      }
+
+      if (state.twoColumns && rows.length > 8) {
+        const half = Math.ceil(rows.length / 2);
+        els.rankingColumns.style.gridTemplateColumns = "1fr 1fr";
+        els.leftTable.innerHTML = buildTable(rows.slice(0, half));
+        els.rightTable.innerHTML = buildTable(rows.slice(half));
+        els.rightTable.style.display = "block";
+      } else {
+        els.rankingColumns.style.gridTemplateColumns = "1fr";
+        els.leftTable.innerHTML = buildTable(rows);
+        els.rightTable.innerHTML = "";
+        els.rightTable.style.display = "none";
+      }
+    }
+
+    function applyTvRowDensity(totalRows) {
+      const rowsPerColumn = Math.max(1, Math.ceil(totalRows / 2));
+      const shouldPrioritizeRanking = totalRows >= 30 || window.innerHeight <= 900;
+
+      document.body.classList.toggle("tv-force-ranking", shouldPrioritizeRanking);
+
+      const panel = document.querySelector(".ranking-panel");
+      const head = document.querySelector(".ranking-head");
+      const panelHeight = panel?.clientHeight || Math.round(window.innerHeight * 0.68);
+      const headHeight = head?.clientHeight || 38;
+      const availableHeight = Math.max(220, panelHeight - headHeight - 24);
+      const idealRowHeight = Math.floor(availableHeight / rowsPerColumn);
+      const rowHeight = Math.max(10, Math.min(22, idealRowHeight));
+
+      document.documentElement.style.setProperty("--tv-row-height", `${rowHeight}px`);
+
+      document.body.classList.toggle("tv-ultra-compact", rowHeight <= 17 || totalRows >= 30);
+      document.body.classList.toggle("tv-mega-compact", rowHeight <= 12 || totalRows >= 40);
+    }
+
+    function buildTable(rows) {
+      if (!rows.length) {
+        return '<div class="empty">Sem dados nesta coluna.</div>';
+      }
+
+      const totalRows = state.activeMode === "day" ? state.lastDay.length : state.overall.length;
+
+      return `
+        <table>
+          <thead>
+            <tr>
+              <th style="width:70px">Pos.</th>
+              <th>Técnico</th>
+              <th class="squad">Squad</th>
+              <th class="num" style="width:78px">Total</th>
+              <th class="move">Mov.</th>
+              <th class="status">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map((item, index) => renderRankRow(item, totalRows, index)).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderRankRow(item, totalRows, index) {
+      const status = getStatus(item.position, totalRows);
+      const medal = getMedal(item.position);
+      const movement = item.movement || { label: "novo", icon: "◎" };
+
+      return `
+        <tr class="${status.rowClass}" style="animation-delay:${index * 18}ms">
+          <td class="pos-cell">${item.position}º ${medal}</td>
+          <td class="tech" title="${escapeHtml(item.technician)}">${escapeHtml(item.technician)}</td>
+          <td class="squad"><span class="squad-badge">${escapeHtml(shortGroup(item.group))}</span></td>
+          <td class="num">${formatNumber(item.totalQuantity)}</td>
+          <td class="move"><span class="move-badge">${movement.icon} ${movement.label}</span></td>
+          <td class="status"><span class="status-badge ${status.badgeClass}">${status.label}</span></td>
+        </tr>
+      `;
+    }
+
+    function getStatus(position, totalRows) {
+      if (position <= 6) {
+        return { label: "🏆 G6", rowClass: "g6", badgeClass: "status-g6" };
+      }
+      if (totalRows >= 4 && position > totalRows - 4) {
+        return { label: "⚠ Z4", rowClass: "z4", badgeClass: "status-z4" };
+      }
+      return { label: "⚙ Meio", rowClass: "", badgeClass: "status-meio" };
+    }
+
+    function getMedal(position) {
+      if (position === 1) return '<span class="medal gold">1</span>';
+      if (position === 2) return '<span class="medal silver">2</span>';
+      if (position === 3) return '<span class="medal bronze">3</span>';
+      return "";
+    }
+
+    function shortGroup(group) {
+      const text = String(group || "").trim();
+      if (!text) return "-";
+      const normalized = text.match(/[A-Za-z0-9]+/g);
+      if (!normalized) return text.slice(0, 2).toUpperCase();
+
+      if (normalized.length === 1) return normalized[0].slice(0, 2).toUpperCase();
+      return normalized.map(part => part[0]).join("").slice(0, 3).toUpperCase();
+    }
+
+    function saveToStorage() {
+      const payload = {
+        fileName: state.fileName,
+        importedAt: state.importedAt,
+        rows: state.rows,
+        periodMode: state.periodMode,
+        startDate: state.startDate,
+        endDate: state.endDate
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    }
+
+    function loadFromStorage() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return false;
+
+      try {
+        const payload = JSON.parse(saved);
+        if (!payload.rows || !Array.isArray(payload.rows)) return false;
+
+        const processed = processRows(payload.rows.map(row => ({
+          time: row.date,
+          Tecnico: row.technician,
+          grupoAtendimento: row.group,
+          Quantidade: row.quantity
+        })));
+
+        state.fileName = payload.fileName || "Arquivo salvo";
+        state.importedAt = payload.importedAt || "";
+        state.rows = processed.rows;
+        state.groups = processed.groups;
+        state.periodMode = payload.periodMode || "currentMonth";
+        state.startDate = payload.startDate || "";
+        state.endDate = payload.endDate || "";
+
+        if (!state.periodMode) {
+          setPeriodMode("currentMonth", false);
+        } else {
+          syncPeriodInputs();
+          rebuildRankingsFromPeriod();
+        }
+
+        renderAll();
+        return true;
+      } catch (error) {
+        console.error(error);
+        localStorage.removeItem(STORAGE_KEY);
+        return false;
+      }
+    }
+
+    function resetState() {
+      state.fileName = "";
+      state.importedAt = "";
+      state.rows = [];
+      state.rounds = [];
+      state.groups = [];
+      state.overall = [];
+      state.lastDay = [];
+      state.activeMode = "general";
+      state.periodMode = "currentMonth";
+      state.startDate = "";
+      state.endDate = "";
+      els.searchInput.value = "";
+      els.groupFilter.value = "";
+    }
+
+    function findColumn(headerMap, possibleNames) {
+      for (const name of possibleNames) {
+        const normalized = normalizeHeader(name);
+        if (headerMap[normalized]) return headerMap[normalized];
+      }
+      return "";
+    }
+
+    function cleanHeader(value) {
+      return String(value || "").replace(/^\uFEFF/, "").replace(/^"|"$/g, "").trim();
+    }
+
+    function cleanText(value) {
+      return String(value ?? "").trim().replace(/\s+/g, " ");
+    }
+
+    function normalizeHeader(value) {
+      return normalizeName(value).replace(/\s+/g, "");
+    }
+
+    function normalizeName(value) {
+      return String(value ?? "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim()
+        .replace(/\s+/g, " ")
+        .toUpperCase();
+    }
+
+    function parseDateOnly(value) {
+      if (value instanceof Date && !Number.isNaN(value.getTime())) {
+        return dateToISO(value);
+      }
+
+      const text = String(value ?? "").trim();
+      if (!text) return "";
+
+      const isoMatch = text.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (isoMatch) return `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`;
+
+      const brMatch = text.match(/^(\d{2})\/(\d{2})\/(\d{4})/);
+      if (brMatch) return `${brMatch[3]}-${brMatch[2]}-${brMatch[1]}`;
+
+      if (/^\d+(\.\d+)?$/.test(text)) {
+        const excelDate = excelSerialToDate(Number(text));
+        if (excelDate) return dateToISO(excelDate);
+      }
+
+      const parsed = new Date(text);
+      if (Number.isNaN(parsed.getTime())) return "";
+      return dateToISO(parsed);
+    }
+
+    function excelSerialToDate(serial) {
+      if (!Number.isFinite(serial)) return null;
+      const utcDays = Math.floor(serial - 25569);
+      const utcValue = utcDays * 86400;
+      const dateInfo = new Date(utcValue * 1000);
+      if (Number.isNaN(dateInfo.getTime())) return null;
+      return new Date(dateInfo.getFullYear(), dateInfo.getMonth(), dateInfo.getDate());
+    }
+
+    function dateToISO(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function parseQuantity(value) {
+      if (typeof value === "number") return value;
+      const text = String(value ?? "").trim().replace(/\./g, "").replace(",", ".");
+      const number = Number(text);
+      return Number.isFinite(number) ? number : NaN;
+    }
+
+    function formatDateBR(date) {
+      if (!date) return "-";
+      const [year, month, day] = date.split("-");
+      return `${day}/${month}/${year}`;
+    }
+
+    function formatNumber(value) {
+      return Number(value || 0).toLocaleString("pt-BR");
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function showMessage(text, type) {
+      els.message.textContent = text;
+      els.message.className = `message show ${type}`;
+      setTimeout(() => {
+        els.message.classList.remove("show");
+      }, 6500);
+    }
+  </script>
+</body>
+</html>
