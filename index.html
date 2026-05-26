@@ -1696,7 +1696,7 @@
       <div>
         <div class="eyebrow">🏆 TV Ranking • Estilo transmissão</div>
         <h1>Brasileirão do Atendimento</h1>
-        <!--<p class="subtitle">Ranking animado por rodadas, com G6, Z4, movimentação de posições e modo apresentação para TV.</p> -->
+        <!-- <p class="subtitle">Ranking animado por rodadas, com G6, Z4, movimentação de posições e modo apresentação para TV.</p>-->
         <div id="message" class="message"></div>
       </div>
 
@@ -1814,6 +1814,7 @@
     const STORAGE_KEY = "brasileirao-atendimento-ranking-v2";
     const SETTINGS_KEY = "brasileirao-atendimento-settings-v1";
     const FIREBASE_SETTINGS_KEY = "brasileirao-atendimento-firebase-v1";
+    const PRESENTATION_KEY = "brasileirao-atendimento-presentation-v1";
     const FIREBASE_COLLECTION = "paineis";
     const FIREBASE_DOCUMENT = "brasileirao-atendimento";
 
@@ -1959,8 +1960,11 @@
       });
 
       document.addEventListener("fullscreenchange", () => {
-        if (!document.fullscreenElement && document.body.classList.contains("presentation")) {
-          exitPresentation(false);
+        if (document.body.classList.contains("presentation")) {
+          // Ao trocar de aba, alguns navegadores saem do fullscreen.
+          // Mantemos o layout de apresentação ativo para funcionar bem com TabRotate.
+          localStorage.setItem(PRESENTATION_KEY, "on");
+          setTimeout(renderAll, 120);
         }
       });
 
@@ -2005,6 +2009,15 @@
       window.addEventListener("resize", () => {
         if (document.body.classList.contains("presentation")) {
           renderAll();
+        }
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && localStorage.getItem(PRESENTATION_KEY) === "on") {
+          document.body.classList.add("presentation");
+          state.twoColumns = true;
+          els.presentationBtn.textContent = "🖥️ Sair apresentação";
+          setTimeout(renderAll, 120);
         }
       });
 
@@ -2296,6 +2309,7 @@
 
 
     async function enterPresentation() {
+      localStorage.setItem(PRESENTATION_KEY, "on");
       document.body.classList.add("presentation");
       state.twoColumns = true;
 
@@ -2314,6 +2328,7 @@
     }
 
     async function exitPresentation(shouldExitFullscreen = true) {
+      localStorage.setItem(PRESENTATION_KEY, "off");
       document.body.classList.remove("presentation", "tv-force-ranking", "tv-ultra-compact", "tv-mega-compact");
       document.documentElement.style.removeProperty("--tv-row-height");
       els.presentationBtn.textContent = "🖥️ Modo apresentação";
