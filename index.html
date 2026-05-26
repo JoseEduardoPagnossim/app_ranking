@@ -1243,6 +1243,113 @@
       display: none;
     }
 
+
+    body.theme-classico {
+      --navy-950: #061727;
+      --navy-900: #092238;
+      --blue-500: #2f80ed;
+      --green-500: #22c55e;
+      --yellow-300: #f8e74f;
+    }
+
+    body.theme-neon {
+      --navy-950: #05020f;
+      --navy-900: #10051f;
+      --navy-800: #2b0a4b;
+      --blue-500: #8b5cf6;
+      --green-500: #00f5d4;
+      --yellow-300: #f0ff42;
+      --red-500: #ff2d75;
+      background:
+        radial-gradient(circle at 20% -10%, rgba(139,92,246,.45), transparent 34rem),
+        radial-gradient(circle at 80% 0%, rgba(0,245,212,.25), transparent 34rem),
+        linear-gradient(180deg, #05020f 0%, #05020f 310px, #f4f0ff 310px, #f4f0ff 100%);
+    }
+
+    body.theme-soften {
+      --navy-950: #071a2f;
+      --navy-900: #09243f;
+      --navy-800: #113b67;
+      --blue-500: #0088cc;
+      --green-500: #36c275;
+      --yellow-300: #ffdd57;
+      background:
+        radial-gradient(circle at 15% -8%, rgba(0,136,204,.35), transparent 34rem),
+        radial-gradient(circle at 86% 0%, rgba(54,194,117,.22), transparent 34rem),
+        linear-gradient(180deg, #071a2f 0%, #071a2f 310px, #eef8fb 310px, #eef8fb 100%);
+    }
+
+    body.theme-claro {
+      --navy-950: #dbeafe;
+      --navy-900: #eff6ff;
+      --navy-800: #bfdbfe;
+      --blue-500: #2563eb;
+      --green-500: #16a34a;
+      --yellow-300: #facc15;
+      color: #0f172a;
+      background:
+        radial-gradient(circle at 20% -10%, rgba(37,99,235,.22), transparent 34rem),
+        radial-gradient(circle at 80% 0%, rgba(22,163,74,.14), transparent 34rem),
+        linear-gradient(180deg, #dbeafe 0%, #dbeafe 310px, #f8fafc 310px, #f8fafc 100%);
+    }
+
+    body.theme-claro .topbar,
+    body.theme-claro .subtitle,
+    body.theme-claro .eyebrow,
+    body.theme-claro .auto-note {
+      color: #0f2948;
+    }
+
+    body.theme-claro h1 {
+      color: #061222;
+      text-shadow: none;
+    }
+
+    body.theme-claro .tabs {
+      background: rgba(15, 23, 42, .12);
+    }
+
+    body.theme-claro .tab {
+      color: #0f2948;
+    }
+
+    .theme-select {
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 16px;
+      padding: 0 13px;
+      min-height: 48px;
+      font: inherit;
+      font-size: 15px;
+      font-weight: 950;
+      color: #eef8ff;
+      background: rgba(255,255,255,.10);
+      box-shadow: 0 10px 24px rgba(0,0,0,.18);
+      outline: none;
+    }
+
+    .theme-select option {
+      color: #0f172a;
+      background: white;
+    }
+
+    .firebase-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      color: #d7eaff;
+      font-size: 12px;
+      font-weight: 950;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+
+    .presentation .theme-select,
+    .presentation .firebase-status {
+      display: none;
+    }
+
     @media (max-width: 1180px) {
       .topbar {
         grid-template-columns: 1fr;
@@ -1353,6 +1460,16 @@
           <input id="fileInput" type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
         </label>
         <button class="btn-dark" id="reloadSavedBtn" type="button">🔄 Recarregar</button>
+        <select class="theme-select" id="themeSelect" title="Tema visual">
+          <option value="classico">Tema Clássico</option>
+          <option value="soften">Tema Soften</option>
+          <option value="neon">Tema Neon</option>
+          <option value="claro">Tema Claro</option>
+        </select>
+        <button class="btn-ghost" id="carouselBtn" type="button">🎠 Carrossel ON</button>
+        <button class="btn-dark" id="firebaseConfigBtn" type="button">☁️ Firebase</button>
+        <button class="btn-dark" id="syncCloudBtn" type="button">↕️ Sincronizar</button>
+        <span class="firebase-status" id="firebaseStatus">☁️ Local</span>
         <button class="btn-yellow" id="presentationBtn" type="button">🖥️ Modo apresentação</button>
         <button class="btn-ghost" id="layoutBtn" type="button">2 colunas</button>
         <button class="btn-danger" id="clearBtn" type="button">🗑️ Limpar</button>
@@ -1406,6 +1523,7 @@
       <div class="tabs">
         <button class="tab" id="dayTab" type="button">Classificação do dia</button>
         <button class="tab active" id="generalTab" type="button">Classificação geral</button>
+        <button class="tab" id="groupTab" type="button">Ranking por grupo</button>
       </div>
       <div class="auto-note" id="autoNote">Alternância automática: 30s • 2 colunas</div>
     </nav>
@@ -1444,14 +1562,19 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
   <script>
     const STORAGE_KEY = "brasileirao-atendimento-ranking-v2";
+    const SETTINGS_KEY = "brasileirao-atendimento-settings-v1";
+    const FIREBASE_SETTINGS_KEY = "brasileirao-atendimento-firebase-v1";
+    const FIREBASE_COLLECTION = "paineis";
+    const FIREBASE_DOCUMENT = "brasileirao-atendimento";
     const EXCLUDED_TECHNICIANS = [
       "Jose Eduardo Pagnossim",
-      "Heitor Drago Gois",
+      "Heitor Drago",
       "João Paulo Cardoso",
-      "Eduardo Thomaz",
-      "Renata Romão"
+      "Eduardo Thomaz"
     ].map(normalizeName);
 
     const state = {
@@ -1462,9 +1585,16 @@
       groups: [],
       overall: [],
       lastDay: [],
+      groupRanking: [],
       activeMode: "general",
       twoColumns: true,
       autoSwitch: true,
+      carouselEnabled: true,
+      carouselModes: ["general", "day", "group"],
+      theme: "classico",
+      firebaseReady: false,
+      firebaseConfig: null,
+      db: null,
       periodMode: "currentMonth",
       startDate: "",
       endDate: ""
@@ -1481,6 +1611,7 @@
       z4Box: document.getElementById("z4Box"),
       dayTab: document.getElementById("dayTab"),
       generalTab: document.getElementById("generalTab"),
+      groupTab: document.getElementById("groupTab"),
       rankingTitle: document.getElementById("rankingTitle"),
       rankingSubtitle: document.getElementById("rankingSubtitle"),
       rankingColumns: document.getElementById("rankingColumns"),
@@ -1488,6 +1619,11 @@
       rightTable: document.getElementById("rightTable"),
       searchInput: document.getElementById("searchInput"),
       groupFilter: document.getElementById("groupFilter"),
+      themeSelect: document.getElementById("themeSelect"),
+      carouselBtn: document.getElementById("carouselBtn"),
+      firebaseConfigBtn: document.getElementById("firebaseConfigBtn"),
+      syncCloudBtn: document.getElementById("syncCloudBtn"),
+      firebaseStatus: document.getElementById("firebaseStatus"),
       currentMonthBtn: document.getElementById("currentMonthBtn"),
       previousMonthBtn: document.getElementById("previousMonthBtn"),
       allPeriodBtn: document.getElementById("allPeriodBtn"),
@@ -1540,6 +1676,21 @@
 
       els.dayTab.addEventListener("click", () => setMode("day"));
       els.generalTab.addEventListener("click", () => setMode("general"));
+      els.groupTab.addEventListener("click", () => setMode("group"));
+
+      els.themeSelect.addEventListener("change", () => {
+        setTheme(els.themeSelect.value);
+        saveSettings();
+      });
+
+      els.carouselBtn.addEventListener("click", () => {
+        state.carouselEnabled = !state.carouselEnabled;
+        saveSettings();
+        renderAll();
+      });
+
+      els.firebaseConfigBtn.addEventListener("click", configureFirebaseFromPrompt);
+      els.syncCloudBtn.addEventListener("click", syncWithCloud);
 
       els.reloadSavedBtn.addEventListener("click", () => {
         const ok = loadFromStorage();
@@ -1595,6 +1746,9 @@
         if (event.key.toLowerCase() === "g") {
           setMode("general");
         }
+        if (event.key.toLowerCase() === "r") {
+          setMode("group");
+        }
       });
 
       window.addEventListener("resize", () => {
@@ -1604,13 +1758,22 @@
       });
 
       setInterval(() => {
-        if (!state.autoSwitch || document.activeElement === els.searchInput) return;
-        state.activeMode = state.activeMode === "general" ? "day" : "general";
+        if (!state.autoSwitch || !state.carouselEnabled || document.activeElement === els.searchInput) return;
+        const currentIndex = state.carouselModes.indexOf(state.activeMode);
+        const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % state.carouselModes.length;
+        state.activeMode = state.carouselModes[nextIndex];
         renderAll();
-      }, 30000);
+      }, 20000);
+
+      loadSettings();
+      initFirebaseFromStorage();
 
       const loaded = loadFromStorage();
       if (!loaded) renderAll();
+
+      if (state.firebaseReady && !loaded) {
+        loadFromCloud();
+      }
     }
 
     async function readFile(file) {
@@ -1638,6 +1801,7 @@
         rebuildRankingsFromPeriod();
 
         saveToStorage();
+        saveToCloud(false);
         renderAll();
         showMessage(`Arquivo importado com sucesso. ${state.rows.length.toLocaleString("pt-BR")} registros válidos considerados.`, "info");
       } catch (error) {
@@ -1903,6 +2067,250 @@
       renderAll();
     }
 
+
+    function buildGroupRanking(rows) {
+      const map = new Map();
+
+      rows.forEach(row => {
+        const key = normalizeName(row.group);
+        const current = map.get(key) || {
+          technician: row.group,
+          group: row.group,
+          totalQuantity: 0,
+          roundsSet: new Set()
+        };
+
+        current.totalQuantity += row.quantity;
+        current.roundsSet.add(row.date);
+        map.set(key, current);
+      });
+
+      return Array.from(map.values())
+        .map(item => ({
+          technician: item.technician,
+          group: item.group,
+          totalQuantity: item.totalQuantity,
+          roundsParticipated: item.roundsSet.size,
+          averagePerRound: item.roundsSet.size ? item.totalQuantity / item.roundsSet.size : 0
+        }))
+        .sort((a, b) =>
+          b.totalQuantity - a.totalQuantity ||
+          b.averagePerRound - a.averagePerRound ||
+          a.technician.localeCompare(b.technician, "pt-BR")
+        )
+        .map((item, index) => ({
+          ...item,
+          position: index + 1,
+          movement: { label: "grupo", value: 0, icon: "◆", className: "same" }
+        }));
+    }
+
+    function setTheme(theme) {
+      const validThemes = ["classico", "soften", "neon", "claro"];
+      state.theme = validThemes.includes(theme) ? theme : "classico";
+      document.body.classList.remove("theme-classico", "theme-soften", "theme-neon", "theme-claro");
+      document.body.classList.add(`theme-${state.theme}`);
+      els.themeSelect.value = state.theme;
+    }
+
+    function loadSettings() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
+        state.carouselEnabled = saved.carouselEnabled ?? true;
+        state.theme = saved.theme || "classico";
+      } catch (error) {
+        state.carouselEnabled = true;
+        state.theme = "classico";
+      }
+
+      setTheme(state.theme);
+    }
+
+    function saveSettings() {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({
+        carouselEnabled: state.carouselEnabled,
+        theme: state.theme
+      }));
+    }
+
+    function updateFirebaseStatus(text, connected = false) {
+      els.firebaseStatus.textContent = connected ? `☁️ ${text}` : `☁️ ${text}`;
+      els.firebaseStatus.style.background = connected ? "rgba(34,197,94,.20)" : "rgba(255,255,255,.10)";
+    }
+
+    function initFirebaseFromStorage() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(FIREBASE_SETTINGS_KEY) || "null");
+        if (!saved || !saved.apiKey || !saved.projectId) {
+          updateFirebaseStatus("Local", false);
+          return false;
+        }
+
+        return initFirebase(saved);
+      } catch (error) {
+        console.warn("Configuração Firebase inválida.", error);
+        updateFirebaseStatus("Local", false);
+        return false;
+      }
+    }
+
+    function initFirebase(config) {
+      if (!window.firebase || !window.firebase.firestore) {
+        updateFirebaseStatus("SDK indisponível", false);
+        return false;
+      }
+
+      try {
+        if (!firebase.apps.length) {
+          firebase.initializeApp(config);
+        }
+
+        state.db = firebase.firestore();
+        state.firebaseConfig = config;
+        state.firebaseReady = true;
+        localStorage.setItem(FIREBASE_SETTINGS_KEY, JSON.stringify(config));
+        updateFirebaseStatus("Conectado", true);
+        return true;
+      } catch (error) {
+        console.error(error);
+        state.firebaseReady = false;
+        updateFirebaseStatus("Erro Firebase", false);
+        showMessage("Não foi possível conectar ao Firebase. Confira o firebaseConfig.", "error");
+        return false;
+      }
+    }
+
+    async function configureFirebaseFromPrompt() {
+      const currentConfig = localStorage.getItem(FIREBASE_SETTINGS_KEY) || "";
+      const message = [
+        "Cole aqui o firebaseConfig do seu app Web.",
+        "Exemplo:",
+        '{"apiKey":"...","authDomain":"...","projectId":"...","storageBucket":"...","messagingSenderId":"...","appId":"..."}'
+      ].join("\n\n");
+
+      const input = prompt(message, currentConfig);
+      if (!input) return;
+
+      try {
+        const config = JSON.parse(input);
+        const ok = initFirebase(config);
+
+        if (ok) {
+          showMessage("Firebase configurado com sucesso. Agora os dados podem ser sincronizados na nuvem.", "info");
+          await syncWithCloud();
+        }
+      } catch (error) {
+        console.error(error);
+        showMessage("Configuração inválida. Cole o firebaseConfig em formato JSON.", "error");
+      }
+    }
+
+    function buildCloudPayload() {
+      return {
+        fileName: state.fileName,
+        importedAt: state.importedAt,
+        updatedAt: new Date().toISOString(),
+        rows: state.rows,
+        settings: {
+          periodMode: state.periodMode,
+          startDate: state.startDate,
+          endDate: state.endDate,
+          theme: state.theme,
+          carouselEnabled: state.carouselEnabled
+        }
+      };
+    }
+
+    async function saveToCloud(showSuccess = true) {
+      if (!state.firebaseReady || !state.db || !state.rows.length) return false;
+
+      try {
+        await state.db
+          .collection(FIREBASE_COLLECTION)
+          .doc(FIREBASE_DOCUMENT)
+          .set(buildCloudPayload(), { merge: true });
+
+        updateFirebaseStatus("Sincronizado", true);
+        if (showSuccess) showMessage("Dados salvos no Firebase com sucesso.", "info");
+        return true;
+      } catch (error) {
+        console.error(error);
+        updateFirebaseStatus("Erro ao salvar", false);
+        if (showSuccess) showMessage("Não foi possível salvar no Firebase. Verifique as regras do Firestore.", "error");
+        return false;
+      }
+    }
+
+    async function loadFromCloud(showSuccess = true) {
+      if (!state.firebaseReady || !state.db) return false;
+
+      try {
+        const doc = await state.db.collection(FIREBASE_COLLECTION).doc(FIREBASE_DOCUMENT).get();
+
+        if (!doc.exists) {
+          if (showSuccess) showMessage("Firebase conectado, mas ainda não há dados salvos na nuvem.", "info");
+          return false;
+        }
+
+        const data = doc.data();
+        if (!data.rows || !Array.isArray(data.rows)) {
+          showMessage("O documento do Firebase não possui dados de ranking válidos.", "error");
+          return false;
+        }
+
+        state.fileName = data.fileName || "Firebase";
+        state.importedAt = data.importedAt || "";
+        state.rows = data.rows;
+
+        if (data.settings) {
+          state.periodMode = data.settings.periodMode || state.periodMode;
+          state.startDate = data.settings.startDate || state.startDate;
+          state.endDate = data.settings.endDate || state.endDate;
+          state.carouselEnabled = data.settings.carouselEnabled ?? state.carouselEnabled;
+          setTheme(data.settings.theme || state.theme);
+        }
+
+        const processed = processRows(state.rows.map(row => ({
+          time: row.date,
+          Tecnico: row.technician,
+          grupoAtendimento: row.group,
+          Quantidade: row.quantity
+        })));
+
+        state.rows = processed.rows;
+        state.groups = processed.groups;
+        rebuildRankingsFromPeriod();
+        saveToStorage();
+        saveSettings();
+        renderAll();
+
+        updateFirebaseStatus("Carregado", true);
+        if (showSuccess) showMessage("Dados carregados do Firebase com sucesso.", "info");
+        return true;
+      } catch (error) {
+        console.error(error);
+        updateFirebaseStatus("Erro ao carregar", false);
+        if (showSuccess) showMessage("Não foi possível carregar do Firebase. Verifique conexão e permissões.", "error");
+        return false;
+      }
+    }
+
+    async function syncWithCloud() {
+      if (!state.firebaseReady) {
+        const ok = initFirebaseFromStorage();
+        if (!ok) {
+          configureFirebaseFromPrompt();
+          return;
+        }
+      }
+
+      if (state.rows.length) {
+        await saveToCloud(true);
+      } else {
+        await loadFromCloud(true);
+      }
+    }
+
     function setPeriodMode(mode, shouldRender = true) {
       state.periodMode = mode;
 
@@ -1958,6 +2366,7 @@
       state.rounds = rounds;
       state.overall = buildOverallRanking(filteredRows, rounds, previousDate);
       state.lastDay = buildDayRanking(filteredRows, rounds[rounds.length - 1] || "", previousDate);
+      state.groupRanking = buildGroupRanking(filteredRows);
     }
 
     function getRowsInSelectedPeriod() {
@@ -1990,8 +2399,8 @@
       renderSpotlights();
       renderRanking();
       els.autoNote.textContent = document.body.classList.contains("presentation")
-        ? "Esc para sair • Alternância automática: 30s"
-        : `Alternância automática: 30s • ${state.twoColumns ? "2 colunas" : "1 coluna"}`;
+        ? `Esc para sair • Carrossel ${state.carouselEnabled ? "ON" : "OFF"}`
+        : `Carrossel ${state.carouselEnabled ? "ON" : "OFF"} • ${state.twoColumns ? "2 colunas" : "1 coluna"}`;
     }
 
     function updateCards() {
@@ -2005,10 +2414,15 @@
     function updateTabs() {
       els.dayTab.classList.toggle("active", state.activeMode === "day");
       els.generalTab.classList.toggle("active", state.activeMode === "general");
+      els.groupTab.classList.toggle("active", state.activeMode === "group");
+      els.carouselBtn.textContent = state.carouselEnabled ? "🎠 Carrossel ON" : "🎠 Carrossel OFF";
 
       if (state.activeMode === "day") {
         els.rankingTitle.textContent = "Classificação do dia";
         els.rankingSubtitle.textContent = "Mostra somente a última rodada encontrada na planilha.";
+      } else if (state.activeMode === "group") {
+        els.rankingTitle.textContent = "Ranking por grupo";
+        els.rankingSubtitle.textContent = "Soma os atendimentos por grupo dentro do período filtrado.";
       } else {
         els.rankingTitle.textContent = "Classificação geral";
         els.rankingSubtitle.textContent = "Soma as rodadas do período filtrado, estilo pontos corridos.";
@@ -2023,7 +2437,11 @@
     }
 
     function getActiveRows() {
-      const base = state.activeMode === "day" ? state.lastDay : state.overall;
+      const base = state.activeMode === "day"
+        ? state.lastDay
+        : state.activeMode === "group"
+          ? state.groupRanking
+          : state.overall;
       const search = normalizeName(els.searchInput.value);
       const group = els.groupFilter.value;
 
@@ -2035,7 +2453,11 @@
     }
 
     function renderSpotlights() {
-      const rows = state.activeMode === "day" ? state.lastDay : state.overall;
+      const rows = state.activeMode === "day"
+        ? state.lastDay
+        : state.activeMode === "group"
+          ? state.groupRanking
+          : state.overall;
       const g6 = rows.slice(0, 6);
       const z4 = rows.slice(-4);
 
@@ -2122,15 +2544,21 @@
         return '<div class="empty">Sem dados nesta coluna.</div>';
       }
 
-      const totalRows = state.activeMode === "day" ? state.lastDay.length : state.overall.length;
+      const totalRows = state.activeMode === "day"
+        ? state.lastDay.length
+        : state.activeMode === "group"
+          ? state.groupRanking.length
+          : state.overall.length;
+      const mainLabel = state.activeMode === "group" ? "Grupo" : "Técnico";
+      const squadLabel = state.activeMode === "group" ? "Tipo" : "Squad";
 
       return `
         <table>
           <thead>
             <tr>
               <th style="width:70px">Pos.</th>
-              <th>Técnico</th>
-              <th class="squad">Squad</th>
+              <th>${mainLabel}</th>
+              <th class="squad">${squadLabel}</th>
               <th class="num" style="width:78px">Total</th>
               <th class="move">Mov.</th>
               <th class="status">Status</th>
@@ -2152,7 +2580,7 @@
         <tr class="${status.rowClass}" style="animation-delay:${index * 18}ms">
           <td class="pos-cell">${item.position}º ${medal}</td>
           <td class="tech" title="${escapeHtml(item.technician)}">${escapeHtml(item.technician)}</td>
-          <td class="squad"><span class="squad-badge">${escapeHtml(shortGroup(item.group))}</span></td>
+          <td class="squad"><span class="squad-badge">${escapeHtml(state.activeMode === "group" ? "GRP" : shortGroup(item.group))}</span></td>
           <td class="num">${formatNumber(item.totalQuantity)}</td>
           <td class="move"><span class="move-badge">${movement.icon} ${movement.label}</span></td>
           <td class="status"><span class="status-badge ${status.badgeClass}">${status.label}</span></td>
@@ -2194,7 +2622,9 @@
         rows: state.rows,
         periodMode: state.periodMode,
         startDate: state.startDate,
-        endDate: state.endDate
+        endDate: state.endDate,
+        theme: state.theme,
+        carouselEnabled: state.carouselEnabled
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     }
@@ -2221,6 +2651,8 @@
         state.periodMode = payload.periodMode || "currentMonth";
         state.startDate = payload.startDate || "";
         state.endDate = payload.endDate || "";
+        state.carouselEnabled = payload.carouselEnabled ?? state.carouselEnabled;
+        setTheme(payload.theme || state.theme);
 
         if (!state.periodMode) {
           setPeriodMode("currentMonth", false);
@@ -2246,6 +2678,7 @@
       state.groups = [];
       state.overall = [];
       state.lastDay = [];
+      state.groupRanking = [];
       state.activeMode = "general";
       state.periodMode = "currentMonth";
       state.startDate = "";
