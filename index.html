@@ -1368,6 +1368,234 @@
     }
 
 
+
+    body.group-mode .spotlight {
+      display: none !important;
+    }
+
+    body.group-mode .ranking-panel {
+      margin-top: 0;
+    }
+
+    .presentation.group-mode .app {
+      height: 100vh;
+      grid-template-rows: auto auto auto 1fr;
+      gap: 6px;
+      padding: 6px 0;
+    }
+
+    .presentation.group-mode .spotlight {
+      display: none !important;
+    }
+
+    .presentation.group-mode .ranking-panel {
+      height: 100%;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .presentation.group-mode .ranking-head {
+      padding: 9px 14px 7px;
+      background: linear-gradient(90deg, #f8fdff, #e7f7ff);
+    }
+
+    .presentation.group-mode .ranking-head h2 {
+      font-size: clamp(26px, 2.2vw, 42px);
+      letter-spacing: -.055em;
+    }
+
+    .presentation.group-mode .ranking-head p {
+      display: block;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .presentation.group-mode .rank-columns {
+      display: block;
+      height: 100%;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(47,128,237,.10), transparent 22rem),
+        radial-gradient(circle at 85% 0%, rgba(34,197,94,.10), transparent 22rem),
+        #ffffff;
+    }
+
+    .presentation.group-mode .rank-column {
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+      border: 0 !important;
+    }
+
+    .presentation.group-mode #rightTable {
+      display: none !important;
+    }
+
+    .presentation.group-mode table {
+      min-width: 0;
+      width: 100%;
+      height: 100%;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+      padding: 10px 16px 16px;
+      table-layout: fixed;
+      background: transparent;
+    }
+
+    .presentation.group-mode thead {
+      display: none;
+    }
+
+    .presentation.group-mode tbody {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      height: 100%;
+      align-content: start;
+    }
+
+    .presentation.group-mode tr {
+      display: grid;
+      grid-template-columns: 86px 1fr 130px;
+      align-items: center;
+      min-height: 118px;
+      padding: 14px 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(15,23,42,.10);
+      background: linear-gradient(135deg, #ffffff, #eef7ff);
+      box-shadow: 0 12px 30px rgba(15, 23, 42, .14);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .presentation.group-mode tr::after {
+      content: "";
+      position: absolute;
+      right: -34px;
+      bottom: -42px;
+      width: 140px;
+      height: 140px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(47,128,237,.16), transparent 68%);
+      pointer-events: none;
+    }
+
+    .presentation.group-mode tr:nth-child(1) {
+      background: linear-gradient(135deg, #fffbea, #eafff3);
+      border-color: rgba(234,179,8,.36);
+    }
+
+    .presentation.group-mode tr:nth-child(2) {
+      background: linear-gradient(135deg, #f8fafc, #eff6ff);
+      border-color: rgba(148,163,184,.42);
+    }
+
+    .presentation.group-mode tr:nth-child(3) {
+      background: linear-gradient(135deg, #fff7ed, #f8fafc);
+      border-color: rgba(194,120,3,.28);
+    }
+
+    .presentation.group-mode td {
+      display: block;
+      height: auto !important;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      line-height: 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    .presentation.group-mode .pos-cell {
+      width: auto;
+      font-size: clamp(28px, 2.2vw, 42px);
+      font-weight: 1000;
+      color: #0f2138;
+      letter-spacing: -.05em;
+    }
+
+    .presentation.group-mode .medal {
+      width: 24px;
+      height: 24px;
+      font-size: 12px;
+      margin-left: 6px;
+      vertical-align: 5px;
+    }
+
+    .presentation.group-mode .tech {
+      font-size: clamp(36px, 4vw, 74px);
+      font-weight: 1000;
+      letter-spacing: -.07em;
+      color: #061222;
+      text-align: left;
+    }
+
+    .presentation.group-mode .num {
+      width: auto;
+      font-size: clamp(28px, 2.8vw, 54px);
+      font-weight: 1000;
+      color: #061222;
+      text-align: right;
+      letter-spacing: -.06em;
+    }
+
+    .presentation.group-mode .squad,
+    .presentation.group-mode .move,
+    .presentation.group-mode .status,
+    .presentation.group-mode th:nth-child(3),
+    .presentation.group-mode td:nth-child(3),
+    .presentation.group-mode th:nth-child(5),
+    .presentation.group-mode td:nth-child(5),
+    .presentation.group-mode th:nth-child(6),
+    .presentation.group-mode td:nth-child(6) {
+      display: none !important;
+    }
+
+    .presentation.group-mode .rank-column + .rank-column {
+      border: 0 !important;
+    }
+
+    .presentation.group-mode.tv-ultra-compact tbody,
+    .presentation.group-mode.tv-mega-compact tbody {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .presentation.group-mode.tv-ultra-compact tr,
+    .presentation.group-mode.tv-mega-compact tr {
+      min-height: 88px;
+      padding: 10px 14px;
+      border-radius: 18px;
+    }
+
+    .presentation.group-mode.tv-ultra-compact .tech,
+    .presentation.group-mode.tv-mega-compact .tech {
+      font-size: clamp(28px, 3.2vw, 56px);
+    }
+
+    .presentation.group-mode.tv-ultra-compact .num,
+    .presentation.group-mode.tv-mega-compact .num {
+      font-size: clamp(22px, 2.2vw, 42px);
+    }
+
+    .presentation.group-mode.tv-ultra-compact .pos-cell,
+    .presentation.group-mode.tv-mega-compact .pos-cell {
+      font-size: clamp(22px, 1.8vw, 34px);
+    }
+
+    @media (max-width: 900px) {
+      .presentation.group-mode tbody {
+        grid-template-columns: 1fr;
+      }
+
+      .presentation.group-mode tr {
+        min-height: 82px;
+      }
+    }
+
     @media (max-width: 1180px) {
       .topbar {
         grid-template-columns: 1fr;
@@ -1468,7 +1696,7 @@
       <div>
         <div class="eyebrow">🏆 TV Ranking • Estilo transmissão</div>
         <h1>Brasileirão do Atendimento</h1>
-        <!-- <p class="subtitle">Ranking animado por rodadas, com G6, Z4, movimentação de posições e modo apresentação para TV.</p> -->
+        <p class="subtitle">Ranking animado por rodadas, com G6, Z4, movimentação de posições e modo apresentação para TV.</p>
         <div id="message" class="message"></div>
       </div>
 
@@ -1591,7 +1819,7 @@
 
     // Senha simples para liberar importação de nova planilha.
     // Altere aqui se quiser trocar a senha.
-    const IMPORT_PASSWORD = "soften123";
+    const IMPORT_PASSWORD = "1234";
     const EXCLUDED_TECHNICIANS = [
       "Jose Eduardo Pagnossim",
       "Heitor Drago",
@@ -1664,17 +1892,7 @@
     function init() {
       els.fileInput.addEventListener("change", event => {
         const file = event.target.files && event.target.files[0];
-
-        if (file) {
-          const password = prompt("Digite a senha para importar uma nova planilha:");
-
-          if (password === IMPORT_PASSWORD) {
-            readFile(file);
-          } else {
-            showMessage("Senha incorreta. A importação foi cancelada.", "error");
-          }
-        }
-
+        if (file) readFile(file);
         event.target.value = "";
       });
 
@@ -1808,7 +2026,20 @@
       }
     }
 
+    function confirmImportPassword() {
+      const password = prompt("Digite a senha para importar uma nova planilha:");
+
+      if (password !== IMPORT_PASSWORD) {
+        showMessage("Senha incorreta. A importação foi cancelada.", "error");
+        return false;
+      }
+
+      return true;
+    }
+
     async function readFile(file) {
+      if (!confirmImportPassword()) return;
+
       try {
         const extension = file.name.split(".").pop().toLowerCase();
 
@@ -2527,6 +2758,14 @@
       if (isPresentation) {
         applyTvRowDensity(rows.length);
 
+        if (state.activeMode === "group") {
+          els.rankingColumns.style.gridTemplateColumns = "1fr";
+          els.leftTable.innerHTML = buildTable(rows);
+          els.rightTable.innerHTML = "";
+          els.rightTable.style.display = "none";
+          return;
+        }
+
         const half = Math.ceil(rows.length / 2);
         const leftRows = rows.slice(0, half);
         const rightRows = rows.slice(half);
@@ -2829,5 +3068,6 @@
       }, 6500);
     }
   </script>
+<!-- versao: senha-importacao-reforcada -->
 </body>
 </html>
