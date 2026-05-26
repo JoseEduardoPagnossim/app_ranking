@@ -165,7 +165,7 @@
 
     .scorecards {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 10px;
       margin-bottom: 10px;
     }
@@ -701,7 +701,7 @@
     }
 
     .presentation .scorecards {
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 6px;
       margin-bottom: 0;
     }
@@ -1140,7 +1140,7 @@
 
     .presentation.tv-mega-compact .scorecards {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 3px;
       margin-bottom: 0;
     }
@@ -1376,10 +1376,6 @@
         <span>🏆 Líder geral</span>
         <b id="overallLeaderCard">-</b>
       </article>
-      <article class="scorecard">
-        <span>📤 Arquivo</span>
-        <b id="fileCard">Nenhum</b>
-      </article>
     </section>
 
     <section class="spotlight">
@@ -1480,7 +1476,6 @@
       roundsCard: document.getElementById("roundsCard"),
       dayLeaderCard: document.getElementById("dayLeaderCard"),
       overallLeaderCard: document.getElementById("overallLeaderCard"),
-      fileCard: document.getElementById("fileCard"),
       g6Box: document.getElementById("g6Box"),
       z4Box: document.getElementById("z4Box"),
       dayTab: document.getElementById("dayTab"),
@@ -2004,7 +1999,6 @@
       els.roundsCard.textContent = String(state.rounds.length);
       els.dayLeaderCard.textContent = state.lastDay[0]?.technician || "-";
       els.overallLeaderCard.textContent = state.overall[0]?.technician || "-";
-      els.fileCard.textContent = state.fileName || "Nenhum";
     }
 
     function updateTabs() {
