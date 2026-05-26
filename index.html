@@ -1350,6 +1350,24 @@
       display: none;
     }
 
+
+    body.group-mode .spotlight {
+      display: none;
+    }
+
+    body.group-mode .ranking-panel {
+      margin-top: 8px;
+    }
+
+    .presentation.group-mode .app {
+      grid-template-rows: auto auto auto 1fr;
+    }
+
+    .presentation.group-mode .ranking-panel {
+      margin-top: 0;
+    }
+
+
     @media (max-width: 1180px) {
       .topbar {
         grid-template-columns: 1fr;
@@ -1570,6 +1588,10 @@
     const FIREBASE_SETTINGS_KEY = "brasileirao-atendimento-firebase-v1";
     const FIREBASE_COLLECTION = "paineis";
     const FIREBASE_DOCUMENT = "brasileirao-atendimento";
+
+    // Senha simples para liberar importação de nova planilha.
+    // Altere aqui se quiser trocar a senha.
+    const IMPORT_PASSWORD = "soften123";
     const EXCLUDED_TECHNICIANS = [
       "Jose Eduardo Pagnossim",
       "Heitor Drago",
@@ -1642,7 +1664,17 @@
     function init() {
       els.fileInput.addEventListener("change", event => {
         const file = event.target.files && event.target.files[0];
-        if (file) readFile(file);
+
+        if (file) {
+          const password = prompt("Digite a senha para importar uma nova planilha:");
+
+          if (password === IMPORT_PASSWORD) {
+            readFile(file);
+          } else {
+            showMessage("Senha incorreta. A importação foi cancelada.", "error");
+          }
+        }
+
         event.target.value = "";
       });
 
@@ -2415,6 +2447,7 @@
       els.dayTab.classList.toggle("active", state.activeMode === "day");
       els.generalTab.classList.toggle("active", state.activeMode === "general");
       els.groupTab.classList.toggle("active", state.activeMode === "group");
+      document.body.classList.toggle("group-mode", state.activeMode === "group");
       els.carouselBtn.textContent = state.carouselEnabled ? "🎠 Carrossel ON" : "🎠 Carrossel OFF";
 
       if (state.activeMode === "day") {
@@ -2453,11 +2486,13 @@
     }
 
     function renderSpotlights() {
-      const rows = state.activeMode === "day"
-        ? state.lastDay
-        : state.activeMode === "group"
-          ? state.groupRanking
-          : state.overall;
+      if (state.activeMode === "group") {
+        els.g6Box.innerHTML = "";
+        els.z4Box.innerHTML = "";
+        return;
+      }
+
+      const rows = state.activeMode === "day" ? state.lastDay : state.overall;
       const g6 = rows.slice(0, 6);
       const z4 = rows.slice(-4);
 
@@ -2589,6 +2624,10 @@
     }
 
     function getStatus(position, totalRows) {
+      if (state.activeMode === "group") {
+        return { label: "◆ Grupo", rowClass: "", badgeClass: "status-meio" };
+      }
+
       if (position <= 6) {
         return { label: "🏆 G6", rowClass: "g6", badgeClass: "status-g6" };
       }
