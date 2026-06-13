@@ -165,9 +165,14 @@
 
     .scorecards {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 10px;
       margin-bottom: 10px;
+    }
+
+    .scorecard.metric-average {
+      border-left: 5px solid var(--yellow-500);
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,250,224,.96));
     }
 
     .scorecard {
@@ -212,6 +217,18 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+
+    .scorecard small {
+      display: block;
+      margin-top: 2px;
+      color: #51627a;
+      font-size: 10px;
+      font-weight: 850;
+      line-height: 1.1;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+
 
     .spotlight {
       display: grid;
@@ -298,6 +315,222 @@
       font-size: 20px;
       letter-spacing: -.04em;
     }
+
+
+    .quality-strip {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .quality-metrics {
+      padding: 12px 14px 14px;
+      border-left: 4px solid var(--yellow-500);
+      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,252,235,.96));
+    }
+
+    .quality-metrics-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .quality-metrics-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 1000;
+      letter-spacing: -.02em;
+      color: #172033;
+    }
+
+    .quality-total {
+      min-width: 105px;
+      border-radius: 10px;
+      background: #06122a;
+      color: #fff;
+      padding: 7px 10px;
+      text-align: center;
+      font-weight: 1000;
+      box-shadow: 0 8px 18px rgba(2,8,23,.18);
+    }
+
+    .quality-total strong {
+      display: block;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: -.04em;
+    }
+
+    .quality-total span {
+      display: block;
+      margin-top: 3px;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .avg-cards {
+      display: grid;
+      grid-template-columns: minmax(220px, 360px);
+      gap: 8px;
+    }
+
+    .avg-card {
+      border: 1px solid rgba(234,179,8,.38);
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.78);
+      box-shadow: 0 8px 22px rgba(15,23,42,.08);
+      min-height: 78px;
+    }
+
+    .avg-card span {
+      display: block;
+      color: #b45309;
+      font-size: 11px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .avg-card b {
+      display: block;
+      margin-top: 4px;
+      color: #06122a;
+      font-size: clamp(27px, 2.3vw, 41px);
+      line-height: .95;
+      letter-spacing: -.07em;
+    }
+
+    .avg-card small {
+      display: block;
+      margin-top: 3px;
+      color: #4b6078;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .praise-panel {
+      padding: 12px 14px 14px;
+      border-left: 4px solid #ff3d9a;
+      background: rgba(255,255,255,.96);
+    }
+
+    .praise-title {
+      margin: 0 0 9px;
+      font-size: 16px;
+      font-weight: 1000;
+      color: #172033;
+      letter-spacing: -.02em;
+    }
+
+    .praise-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .praise-card {
+      border: 1px solid #dce6f1;
+      border-radius: 10px;
+      padding: 7px 8px;
+      background: linear-gradient(180deg, #ffffff, #f7fbff);
+      min-height: 48px;
+      overflow: hidden;
+    }
+
+    .praise-card b {
+      display: block;
+      font-size: 11px;
+      font-weight: 1000;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #0f2138;
+    }
+
+    .praise-card p {
+      margin: 3px 0 0;
+      font-size: 11px;
+      line-height: 1.15;
+      color: #2d4058;
+      font-weight: 750;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .presentation .quality-strip {
+      grid-template-columns: 1fr;
+      gap: 6px;
+      margin-bottom: 0;
+    }
+
+    .presentation .quality-metrics,
+    .presentation .praise-panel {
+      padding: 6px 8px 7px;
+      border-radius: 12px;
+    }
+
+    .presentation .quality-metrics-title,
+    .presentation .praise-title {
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .presentation .quality-total {
+      min-width: 70px;
+      padding: 4px 7px;
+    }
+
+    .presentation .quality-total strong {
+      font-size: 17px;
+    }
+
+    .presentation .quality-total span {
+      font-size: 7px;
+    }
+
+    .presentation .avg-cards {
+      gap: 5px;
+    }
+
+    .presentation .avg-card {
+      min-height: 46px;
+      padding: 6px 7px;
+      border-radius: 10px;
+    }
+
+    .presentation .avg-card span,
+    .presentation .avg-card small {
+      font-size: 8px;
+    }
+
+    .presentation .avg-card b {
+      font-size: clamp(18px, 1.45vw, 28px);
+      margin-top: 1px;
+    }
+
+    .presentation .praise-grid {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 4px;
+    }
+
+    .presentation .praise-card {
+      min-height: 36px;
+      padding: 4px 6px;
+      border-radius: 8px;
+    }
+
+    .presentation .praise-card b,
+    .presentation .praise-card p {
+      font-size: 8px;
+    }
+
 
     .tabs-bar {
       display: flex;
@@ -701,7 +934,7 @@
     }
 
     .presentation .scorecards {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 6px;
       margin-bottom: 0;
     }
@@ -721,6 +954,11 @@
       font-size: clamp(15px, 1.15vw, 21px);
       margin-top: 2px;
     }
+
+    .presentation .scorecard small {
+      display: none;
+    }
+
 
     .presentation .spotlight {
       grid-template-columns: 1.35fr .95fr;
@@ -1140,7 +1378,7 @@
 
     .presentation.tv-mega-compact .scorecards {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 3px;
       margin-bottom: 0;
     }
@@ -1597,6 +1835,8 @@
     }
 
     @media (max-width: 1180px) {
+      .quality-strip { grid-template-columns: 1fr; }
+      .praise-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .topbar {
         grid-template-columns: 1fr;
       }
@@ -1604,10 +1844,6 @@
       .actions {
         justify-content: flex-start;
         padding-top: 0;
-      }
-
-      .scorecards {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .spotlight {
@@ -1636,6 +1872,10 @@
       }
 
       .scorecards {
+        grid-template-columns: 1fr;
+      }
+
+      .avg-cards, .praise-grid {
         grid-template-columns: 1fr;
       }
 
@@ -1724,20 +1964,29 @@
 
     <section class="scorecards">
       <article class="scorecard">
-        <span>📅 Data do dia</span>
+        <span>📅 Última data do filtro</span>
         <b id="dayCard">-</b>
+        <small>base da aba do dia</small>
       </article>
       <article class="scorecard">
-        <span>🔄 Rodadas</span>
+        <span>🔄 Dias no período</span>
         <b id="roundsCard">0</b>
+        <small>datas consideradas no filtro</small>
       </article>
       <article class="scorecard">
-        <span>🥇 Líder do dia</span>
+        <span>🥇 Líder atendimentos</span>
         <b id="dayLeaderCard">-</b>
+        <small>1º em atendimentos no período</small>
       </article>
       <article class="scorecard">
-        <span>🏆 Líder geral</span>
+        <span>🏆 Líder notas</span>
         <b id="overallLeaderCard">-</b>
+        <small>1º na classificação de notas</small>
+      </article>
+      <article class="scorecard metric-average">
+        <span>⭐ Média avaliações</span>
+        <b id="avgServiceCard">-</b>
+        <small><strong id="totalRatingsCard">0</strong> avaliações no período</small>
       </article>
     </section>
 
@@ -1768,7 +2017,9 @@
     <nav class="tabs-bar">
       <div class="tabs">
         <button class="tab" id="dayTab" type="button">Classificação do dia</button>
+        <button class="tab" id="notesDayTab" type="button">Notas do dia</button>
         <button class="tab active" id="generalTab" type="button">Classificação geral</button>
+        <button class="tab" id="notesGeneralTab" type="button">Notas geral</button>
         <button class="tab" id="groupTab" type="button">Ranking por grupo</button>
       </div>
       <div class="auto-note" id="autoNote">Alternância automática: 30s • 2 colunas</div>
@@ -1838,11 +2089,15 @@
       overall: [],
       lastDay: [],
       groupRanking: [],
+      noteDay: [],
+      noteOverall: [],
+      qualitySummary: null,
+      praiseComments: [],
       activeMode: "general",
       twoColumns: true,
       autoSwitch: true,
       carouselEnabled: true,
-      carouselModes: ["general", "day", "group"],
+      carouselModes: ["general", "notesGeneral", "day", "notesDay", "group"],
       theme: "classico",
       firebaseReady: false,
       firebaseConfig: null,
@@ -1859,10 +2114,14 @@
       roundsCard: document.getElementById("roundsCard"),
       dayLeaderCard: document.getElementById("dayLeaderCard"),
       overallLeaderCard: document.getElementById("overallLeaderCard"),
+      totalRatingsCard: document.getElementById("totalRatingsCard"),
+      avgServiceCard: document.getElementById("avgServiceCard"),
       g6Box: document.getElementById("g6Box"),
       z4Box: document.getElementById("z4Box"),
       dayTab: document.getElementById("dayTab"),
+      notesDayTab: document.getElementById("notesDayTab"),
       generalTab: document.getElementById("generalTab"),
+      notesGeneralTab: document.getElementById("notesGeneralTab"),
       groupTab: document.getElementById("groupTab"),
       rankingTitle: document.getElementById("rankingTitle"),
       rankingSubtitle: document.getElementById("rankingSubtitle"),
@@ -1927,7 +2186,9 @@
       });
 
       els.dayTab.addEventListener("click", () => setMode("day"));
+      els.notesDayTab.addEventListener("click", () => setMode("notesDay"));
       els.generalTab.addEventListener("click", () => setMode("general"));
+      els.notesGeneralTab.addEventListener("click", () => setMode("notesGeneral"));
       els.groupTab.addEventListener("click", () => setMode("group"));
 
       els.themeSelect.addEventListener("change", () => {
@@ -1974,11 +2235,17 @@
         renderAll();
       });
 
-      els.clearBtn.addEventListener("click", () => {
+      els.clearBtn.addEventListener("click", async () => {
+        const clearCloud = state.firebaseReady && state.db && confirm("Deseja limpar também o histórico salvo no Firebase?\n\nOK = limpa local e Firebase.\nCancelar = limpa apenas este navegador.");
         localStorage.removeItem(STORAGE_KEY);
         resetState();
         renderAll();
-        showMessage("Dados removidos deste navegador.", "info");
+
+        if (clearCloud) {
+          await clearCloudHistory();
+        } else {
+          showMessage("Dados removidos deste navegador. O histórico do Firebase foi mantido.", "info");
+        }
       });
 
       window.addEventListener("keydown", event => {
@@ -2070,17 +2337,29 @@
           throw new Error("Nenhum registro válido sobrou após aplicar os filtros.");
         }
 
+        let baseRows = state.rows || [];
+        if (state.firebaseReady && state.db) {
+          const cloudRows = await getRowsFromCloud(false);
+          if (cloudRows.length) baseRows = cloudRows;
+        }
+
+        const mergedRows = mergeHistoricalRows(baseRows, processed.rows);
+        const mergedProcessed = processRows(rowsToRawRows(mergedRows));
+
         state.fileName = file.name;
         state.importedAt = new Date().toISOString();
-        state.rows = processed.rows;
-        state.groups = processed.groups;
+        state.rows = mergedProcessed.rows;
+        state.groups = mergedProcessed.groups;
         setPeriodMode("currentMonth", false);
         rebuildRankingsFromPeriod();
 
         saveToStorage();
         saveToCloud(false);
         renderAll();
-        showMessage(`Arquivo importado com sucesso. ${state.rows.length.toLocaleString("pt-BR")} registros válidos considerados.`, "info");
+        const importedDates = Array.from(new Set(processed.rows.map(row => row.date))).sort();
+        const firstDate = importedDates[0] ? formatDateBR(importedDates[0]) : "-";
+        const lastDate = importedDates[importedDates.length - 1] ? formatDateBR(importedDates[importedDates.length - 1]) : "-";
+        showMessage(`Arquivo importado e mesclado ao histórico. ${processed.rows.length.toLocaleString("pt-BR")} registros lidos de ${firstDate} a ${lastDate}. Histórico atual: ${state.rows.length.toLocaleString("pt-BR")} registros.`, "info");
       } catch (error) {
         console.error(error);
         showMessage(error.message || "Não foi possível importar o arquivo.", "error");
@@ -2200,6 +2479,15 @@
       const techKey = findColumn(headers, ["Tecnico", "Técnico", "tecnico", "technician"]);
       const groupKey = findColumn(headers, ["grupoAtendimento", "grupo", "squad", "equipe", "group"]);
       const quantityKey = findColumn(headers, ["Quantidade", "quantidade", "qtd", "total", "atendimentos"]);
+      const note5Key = findColumn(headers, ["Nota 5", "nota5", "5", "Qtde Nota 5", "Qtd Nota 5"]);
+      const note4Key = findColumn(headers, ["Nota 4", "nota4", "4", "Qtde Nota 4", "Qtd Nota 4"]);
+      const note3Key = findColumn(headers, ["Nota 3", "nota3", "3", "Qtde Nota 3", "Qtd Nota 3"]);
+      const note2Key = findColumn(headers, ["Nota 2", "nota2", "2", "Qtde Nota 2", "Qtd Nota 2"]);
+      const note1Key = findColumn(headers, ["Nota 1", "nota1", "1", "Qtde Nota 1", "Qtd Nota 1"]);
+      const serviceAvgKey = findColumn(headers, ["Média Nota Serviço", "Media Nota Servico", "Nota Serviço", "Nota Servico", "notaServico"]);
+      const productAvgKey = findColumn(headers, ["Média Nota Produto", "Media Nota Produto", "Nota Produto", "notaProduto"]);
+      const companyAvgKey = findColumn(headers, ["Média Nota Empresa", "Media Nota Empresa", "Nota Empresa", "notaEmpresa"]);
+      const commentKey = findColumn(headers, ["Comentário", "Comentario", "Comentários", "Comentarios", "Observação", "Observacao", "feedback", "avaliacao"]);
 
       if (!timeKey || !techKey || !groupKey || !quantityKey) {
         throw new Error("Não encontrei as colunas obrigatórias: time, Tecnico, grupoAtendimento e Quantidade.");
@@ -2210,8 +2498,21 @@
         const technician = cleanText(row[techKey]);
         const group = cleanText(row[groupKey]);
         const quantity = parseQuantity(row[quantityKey]);
+        const notes = {
+          5: parseQuantity(note5Key ? row[note5Key] : 0) || 0,
+          4: parseQuantity(note4Key ? row[note4Key] : 0) || 0,
+          3: parseQuantity(note3Key ? row[note3Key] : 0) || 0,
+          2: parseQuantity(note2Key ? row[note2Key] : 0) || 0,
+          1: parseQuantity(note1Key ? row[note1Key] : 0) || 0
+        };
+        const totalRatings = notes[1] + notes[2] + notes[3] + notes[4] + notes[5];
+        const ratingSum = notes[1] + notes[2] * 2 + notes[3] * 3 + notes[4] * 4 + notes[5] * 5;
+        const comment = cleanText(commentKey ? row[commentKey] : "");
+        const serviceAvg = parseQuantity(serviceAvgKey ? row[serviceAvgKey] : "");
+        const productAvg = parseQuantity(productAvgKey ? row[productAvgKey] : "");
+        const companyAvg = parseQuantity(companyAvgKey ? row[companyAvgKey] : "");
 
-        return { date, technician, group, quantity };
+        return { date, technician, group, quantity, notes, totalRatings, ratingSum, comment, serviceAvg, productAvg, companyAvg };
       }).filter(row => {
         if (!row.date || !row.technician || !row.group) return false;
         if (!Number.isFinite(row.quantity)) return false;
@@ -2227,6 +2528,100 @@
       const lastDay = buildDayRanking(rows, rounds[rounds.length - 1] || "", previousDate);
 
       return { rows, rounds, groups, overall, lastDay };
+    }
+
+    function rowsToRawRows(rows) {
+      return (rows || []).map(row => ({
+        time: row.date,
+        Tecnico: row.technician,
+        grupoAtendimento: row.group,
+        Quantidade: row.quantity,
+        "Nota 5": row.notes?.[5] || 0,
+        "Nota 4": row.notes?.[4] || 0,
+        "Nota 3": row.notes?.[3] || 0,
+        "Nota 2": row.notes?.[2] || 0,
+        "Nota 1": row.notes?.[1] || 0,
+        Comentario: row.comment || ""
+      }));
+    }
+
+    function historicalRowKey(row) {
+      return [row.date, normalizeName(row.technician), normalizeName(row.group)].join("|");
+    }
+
+    function cloneHistoricalRow(row) {
+      const notes = {
+        5: Number(row.notes?.[5] || 0),
+        4: Number(row.notes?.[4] || 0),
+        3: Number(row.notes?.[3] || 0),
+        2: Number(row.notes?.[2] || 0),
+        1: Number(row.notes?.[1] || 0)
+      };
+      const totalRatings = notes[1] + notes[2] + notes[3] + notes[4] + notes[5];
+      const ratingSum = notes[1] + notes[2] * 2 + notes[3] * 3 + notes[4] * 4 + notes[5] * 5;
+
+      return {
+        date: row.date,
+        technician: row.technician,
+        group: row.group,
+        quantity: Number(row.quantity || 0),
+        notes,
+        totalRatings,
+        ratingSum,
+        comment: row.comment || "",
+        serviceAvg: row.serviceAvg,
+        productAvg: row.productAvg,
+        companyAvg: row.companyAvg
+      };
+    }
+
+    function mergeRowTotals(base, incoming) {
+      const merged = cloneHistoricalRow(base);
+      const add = cloneHistoricalRow(incoming);
+
+      merged.quantity += add.quantity;
+      [1, 2, 3, 4, 5].forEach(note => {
+        merged.notes[note] = Number(merged.notes[note] || 0) + Number(add.notes[note] || 0);
+      });
+      merged.totalRatings = merged.notes[1] + merged.notes[2] + merged.notes[3] + merged.notes[4] + merged.notes[5];
+      merged.ratingSum = merged.notes[1] + merged.notes[2] * 2 + merged.notes[3] * 3 + merged.notes[4] * 4 + merged.notes[5] * 5;
+      merged.comment = add.comment || merged.comment || "";
+      return merged;
+    }
+
+    function collapseRowsByHistoricalKey(rows) {
+      const map = new Map();
+
+      (rows || []).forEach(row => {
+        if (!row || !row.date || !row.technician || !row.group) return;
+        const key = historicalRowKey(row);
+        if (map.has(key)) {
+          map.set(key, mergeRowTotals(map.get(key), row));
+        } else {
+          map.set(key, cloneHistoricalRow(row));
+        }
+      });
+
+      return Array.from(map.values()).sort((a, b) =>
+        a.date.localeCompare(b.date) ||
+        a.technician.localeCompare(b.technician, "pt-BR") ||
+        a.group.localeCompare(b.group, "pt-BR")
+      );
+    }
+
+    function mergeHistoricalRows(existingRows, importedRows) {
+      const mergedMap = new Map();
+      collapseRowsByHistoricalKey(existingRows).forEach(row => mergedMap.set(historicalRowKey(row), row));
+
+      // A nova planilha corrige/substitui os registros do mesmo dia+técnico+grupo,
+      // mas não apaga datas antigas que deixaram de aparecer no CSV de período fixo.
+      collapseRowsByHistoricalKey(importedRows).forEach(row => mergedMap.set(historicalRowKey(row), row));
+
+      return Array.from(mergedMap.values()).sort((a, b) =>
+        a.date.localeCompare(b.date) ||
+        a.technician.localeCompare(b.technician, "pt-BR") ||
+        a.group.localeCompare(b.group, "pt-BR")
+      );
     }
 
     function buildOverallRanking(rows, rounds, previousDate) {
@@ -2266,6 +2661,114 @@
         date,
         movement: calculateMovement(previousPosition.get(normalizeName(item.technician)), item.position)
       }));
+    }
+
+
+    function buildNoteRanking(rows, date = "", previousDate = "") {
+      const fullMap = new Map();
+      const previousMap = new Map();
+
+      rows.forEach(row => {
+        if (date && row.date !== date) return;
+        addNotesToMap(fullMap, row);
+      });
+
+      rows.forEach(row => {
+        if (!previousDate) return;
+        if (date) {
+          if (row.date === previousDate) addNotesToMap(previousMap, row);
+        } else if (row.date <= previousDate) {
+          addNotesToMap(previousMap, row);
+        }
+      });
+
+      const previousRanking = rankNotesFromMap(previousMap);
+      const previousPosition = new Map(previousRanking.map(item => [normalizeName(item.technician), item.position]));
+
+      return rankNotesFromMap(fullMap).map(item => ({
+        ...item,
+        totalQuantity: item.totalRatings,
+        averagePerRound: item.averageRating,
+        movement: calculateMovement(previousPosition.get(normalizeName(item.technician)), item.position)
+      }));
+    }
+
+    function addNotesToMap(map, row) {
+      const key = normalizeName(row.technician);
+      const current = map.get(key) || {
+        technician: row.technician,
+        group: row.group,
+        totalRatings: 0,
+        ratingSum: 0,
+        roundsSet: new Set()
+      };
+
+      current.totalRatings += row.totalRatings || 0;
+      current.ratingSum += row.ratingSum || 0;
+      if ((row.totalRatings || 0) > 0) current.roundsSet.add(row.date);
+      current.group = current.group || row.group;
+      map.set(key, current);
+    }
+
+    function rankNotesFromMap(map) {
+      return Array.from(map.values())
+        .filter(item => item.totalRatings > 0)
+        .map(item => ({
+          technician: item.technician,
+          group: item.group,
+          totalRatings: item.totalRatings,
+          ratingSum: item.ratingSum,
+          averageRating: item.totalRatings ? item.ratingSum / item.totalRatings : 0,
+          roundsParticipated: item.roundsSet.size
+        }))
+        .sort((a, b) =>
+          b.totalRatings - a.totalRatings ||
+          b.averageRating - a.averageRating ||
+          a.technician.localeCompare(b.technician, "pt-BR")
+        )
+        .map((item, index) => ({ ...item, position: index + 1 }));
+    }
+
+    function buildQualitySummary(rows) {
+      const summary = {
+        totalRatings: 0,
+        ratingSum: 0,
+        serviceSum: 0,
+        serviceCount: 0,
+        productSum: 0,
+        productCount: 0,
+        companySum: 0,
+        companyCount: 0
+      };
+
+      rows.forEach(row => {
+        summary.totalRatings += row.totalRatings || 0;
+        summary.ratingSum += row.ratingSum || 0;
+        if (Number.isFinite(row.serviceAvg)) { summary.serviceSum += row.serviceAvg; summary.serviceCount++; }
+        if (Number.isFinite(row.productAvg)) { summary.productSum += row.productAvg; summary.productCount++; }
+        if (Number.isFinite(row.companyAvg)) { summary.companySum += row.companyAvg; summary.companyCount++; }
+      });
+
+      const generalAverage = summary.totalRatings ? summary.ratingSum / summary.totalRatings : 0;
+      return {
+        totalRatings: summary.totalRatings,
+        generalAverage,
+        serviceAverage: generalAverage
+      };
+    }
+
+    function buildPraiseComments(rows) {
+      const praiseWords = ["bom", "boa", "otimo", "otima", "excelente", "parabens", "satisfeito", "satisfeita", "rapido", "rapida", "eficaz", "atencioso", "atenciosa", "resolvido", "resolvida", "gostei", "perfeito", "perfeita", "maravilhoso", "maravilhosa", "elogio"];
+
+      return rows
+        .filter(row => row.comment && praiseWords.some(word => normalizeName(row.comment).includes(normalizeName(word))))
+        .sort((a, b) => (b.totalRatings || 0) - (a.totalRatings || 0) || (b.ratingSum || 0) - (a.ratingSum || 0))
+        .slice(0, 10)
+        .map((row, index) => ({
+          position: index + 1,
+          technician: row.technician,
+          comment: row.comment
+        }));
     }
 
     function addToMap(map, row, amount) {
@@ -2510,13 +3013,32 @@
           .set(buildCloudPayload(), { merge: true });
 
         updateFirebaseStatus("Sincronizado", true);
-        if (showSuccess) showMessage("Dados salvos no Firebase com sucesso.", "info");
+        if (showSuccess) showMessage("Histórico salvo no Firebase com sucesso.", "info");
         return true;
       } catch (error) {
         console.error(error);
         updateFirebaseStatus("Erro ao salvar", false);
         if (showSuccess) showMessage("Não foi possível salvar no Firebase. Verifique as regras do Firestore.", "error");
         return false;
+      }
+    }
+
+    async function getRowsFromCloud(showErrors = true) {
+      if (!state.firebaseReady || !state.db) return [];
+
+      try {
+        const doc = await state.db.collection(FIREBASE_COLLECTION).doc(FIREBASE_DOCUMENT).get();
+        if (!doc.exists) return [];
+
+        const data = doc.data();
+        if (!data.rows || !Array.isArray(data.rows) || !data.rows.length) return [];
+
+        const processed = processRows(rowsToRawRows(data.rows));
+        return processed.rows;
+      } catch (error) {
+        console.error(error);
+        if (showErrors) showMessage("Não foi possível buscar o histórico no Firebase para mesclar os dados.", "error");
+        return [];
       }
     }
 
@@ -2537,6 +3059,14 @@
           return false;
         }
 
+        if (!data.rows.length) {
+          resetState();
+          renderAll();
+          updateFirebaseStatus("Histórico vazio", true);
+          if (showSuccess) showMessage("Firebase conectado, mas o histórico está vazio.", "info");
+          return false;
+        }
+
         state.fileName = data.fileName || "Firebase";
         state.importedAt = data.importedAt || "";
         state.rows = data.rows;
@@ -2549,12 +3079,7 @@
           setTheme(data.settings.theme || state.theme);
         }
 
-        const processed = processRows(state.rows.map(row => ({
-          time: row.date,
-          Tecnico: row.technician,
-          grupoAtendimento: row.group,
-          Quantidade: row.quantity
-        })));
+        const processed = processRows(rowsToRawRows(state.rows));
 
         state.rows = processed.rows;
         state.groups = processed.groups;
@@ -2570,6 +3095,38 @@
         console.error(error);
         updateFirebaseStatus("Erro ao carregar", false);
         if (showSuccess) showMessage("Não foi possível carregar do Firebase. Verifique conexão e permissões.", "error");
+        return false;
+      }
+    }
+
+    async function clearCloudHistory() {
+      if (!state.firebaseReady || !state.db) return false;
+
+      try {
+        await state.db
+          .collection(FIREBASE_COLLECTION)
+          .doc(FIREBASE_DOCUMENT)
+          .set({
+            fileName: "Histórico limpo",
+            importedAt: "",
+            updatedAt: new Date().toISOString(),
+            rows: [],
+            settings: {
+              periodMode: state.periodMode,
+              startDate: state.startDate,
+              endDate: state.endDate,
+              theme: state.theme,
+              carouselEnabled: state.carouselEnabled
+            }
+          }, { merge: false });
+
+        updateFirebaseStatus("Histórico limpo", true);
+        showMessage("Histórico local e Firebase foram limpos.", "info");
+        return true;
+      } catch (error) {
+        console.error(error);
+        updateFirebaseStatus("Erro ao limpar", false);
+        showMessage("Os dados locais foram limpos, mas não consegui limpar o Firebase.", "error");
         return false;
       }
     }
@@ -2645,6 +3202,9 @@
       state.rounds = rounds;
       state.overall = buildOverallRanking(filteredRows, rounds, previousDate);
       state.lastDay = buildDayRanking(filteredRows, rounds[rounds.length - 1] || "", previousDate);
+      state.noteOverall = buildNoteRanking(filteredRows, "", previousDate);
+      state.noteDay = buildNoteRanking(filteredRows, rounds[rounds.length - 1] || "", previousDate);
+      state.qualitySummary = buildQualitySummary(filteredRows);
       state.groupRanking = buildGroupRanking(filteredRows);
     }
 
@@ -2675,6 +3235,7 @@
       updateTabs();
       updateGroupFilter();
       syncPeriodInputs();
+      renderQuality();
       renderSpotlights();
       renderRanking();
       els.autoNote.textContent = document.body.classList.contains("presentation")
@@ -2686,13 +3247,22 @@
       const lastDate = state.rounds[state.rounds.length - 1] || "";
       els.dayCard.textContent = lastDate ? formatDateBR(lastDate) : "-";
       els.roundsCard.textContent = String(state.rounds.length);
-      els.dayLeaderCard.textContent = state.lastDay[0]?.technician || "-";
-      els.overallLeaderCard.textContent = state.overall[0]?.technician || "-";
+      els.dayLeaderCard.textContent = state.overall[0]?.technician || "-";
+      els.overallLeaderCard.textContent = state.noteOverall[0]?.technician || "-";
+    }
+
+
+    function renderQuality() {
+      const summary = state.qualitySummary || { totalRatings: 0, serviceAverage: 0 };
+      els.totalRatingsCard.textContent = formatNumber(summary.totalRatings || 0);
+      els.avgServiceCard.textContent = summary.totalRatings ? formatDecimal(summary.serviceAverage) : "-";
     }
 
     function updateTabs() {
       els.dayTab.classList.toggle("active", state.activeMode === "day");
+      els.notesDayTab.classList.toggle("active", state.activeMode === "notesDay");
       els.generalTab.classList.toggle("active", state.activeMode === "general");
+      els.notesGeneralTab.classList.toggle("active", state.activeMode === "notesGeneral");
       els.groupTab.classList.toggle("active", state.activeMode === "group");
       document.body.classList.toggle("group-mode", state.activeMode === "group");
       els.carouselBtn.textContent = state.carouselEnabled ? "🎠 Carrossel ON" : "🎠 Carrossel OFF";
@@ -2700,6 +3270,12 @@
       if (state.activeMode === "day") {
         els.rankingTitle.textContent = "Classificação do dia";
         els.rankingSubtitle.textContent = "Mostra somente a última rodada encontrada na planilha.";
+      } else if (state.activeMode === "notesDay") {
+        els.rankingTitle.textContent = "Ranking de notas do dia";
+        els.rankingSubtitle.textContent = "Soma a quantidade de avaliações recebidas por técnico na última data do período.";
+      } else if (state.activeMode === "notesGeneral") {
+        els.rankingTitle.textContent = "Ranking geral de notas";
+        els.rankingSubtitle.textContent = "Soma a quantidade de avaliações por técnico dentro do período filtrado.";
       } else if (state.activeMode === "group") {
         els.rankingTitle.textContent = "Ranking por grupo";
         els.rankingSubtitle.textContent = "Soma os atendimentos por grupo dentro do período filtrado.";
@@ -2719,9 +3295,13 @@
     function getActiveRows() {
       const base = state.activeMode === "day"
         ? state.lastDay
-        : state.activeMode === "group"
-          ? state.groupRanking
-          : state.overall;
+        : state.activeMode === "notesDay"
+          ? state.noteDay
+          : state.activeMode === "notesGeneral"
+            ? state.noteOverall
+            : state.activeMode === "group"
+              ? state.groupRanking
+              : state.overall;
       const search = normalizeName(els.searchInput.value);
       const group = els.groupFilter.value;
 
@@ -2739,7 +3319,7 @@
         return;
       }
 
-      const rows = state.activeMode === "day" ? state.lastDay : state.overall;
+      const rows = state.activeMode === "day" ? state.lastDay : state.activeMode === "notesDay" ? state.noteDay : state.activeMode === "notesGeneral" ? state.noteOverall : state.overall;
       const g6 = rows.slice(0, 6);
       const z4 = rows.slice(-4);
 
@@ -2836,11 +3416,16 @@
 
       const totalRows = state.activeMode === "day"
         ? state.lastDay.length
-        : state.activeMode === "group"
-          ? state.groupRanking.length
-          : state.overall.length;
+        : state.activeMode === "notesDay"
+          ? state.noteDay.length
+          : state.activeMode === "notesGeneral"
+            ? state.noteOverall.length
+            : state.activeMode === "group"
+              ? state.groupRanking.length
+              : state.overall.length;
       const mainLabel = state.activeMode === "group" ? "Grupo" : "Técnico";
       const squadLabel = state.activeMode === "group" ? "Tipo" : "Squad";
+      const isNotesMode = state.activeMode === "notesDay" || state.activeMode === "notesGeneral";
 
       return `
         <table>
@@ -2849,7 +3434,8 @@
               <th style="width:70px">Pos.</th>
               <th>${mainLabel}</th>
               <th class="squad">${squadLabel}</th>
-              <th class="num" style="width:78px">Total</th>
+              <th class="num" style="width:78px">${isNotesMode ? "Aval." : "Total"}</th>
+              ${isNotesMode ? '<th class="num" style="width:78px">Média</th>' : ''}
               <th class="move">Mov.</th>
               <th class="status">Status</th>
             </tr>
@@ -2872,6 +3458,7 @@
           <td class="tech" title="${escapeHtml(item.technician)}">${escapeHtml(item.technician)}</td>
           <td class="squad"><span class="squad-badge">${escapeHtml(state.activeMode === "group" ? "GRP" : shortGroup(item.group))}</span></td>
           <td class="num">${formatNumber(item.totalQuantity)}</td>
+          ${(state.activeMode === "notesDay" || state.activeMode === "notesGeneral") ? `<td class="num">${formatDecimal(item.averageRating)}</td>` : ""}
           <td class="move"><span class="move-badge">${movement.icon} ${movement.label}</span></td>
           <td class="status"><span class="status-badge ${status.badgeClass}">${status.label}</span></td>
         </tr>
@@ -2931,12 +3518,7 @@
         const payload = JSON.parse(saved);
         if (!payload.rows || !Array.isArray(payload.rows)) return false;
 
-        const processed = processRows(payload.rows.map(row => ({
-          time: row.date,
-          Tecnico: row.technician,
-          grupoAtendimento: row.group,
-          Quantidade: row.quantity
-        })));
+        const processed = processRows(rowsToRawRows(payload.rows));
 
         state.fileName = payload.fileName || "Arquivo salvo";
         state.importedAt = payload.importedAt || "";
@@ -2973,6 +3555,10 @@
       state.overall = [];
       state.lastDay = [];
       state.groupRanking = [];
+      state.noteDay = [];
+      state.noteOverall = [];
+      state.qualitySummary = null;
+      state.praiseComments = [];
       state.activeMode = "general";
       state.periodMode = "currentMonth";
       state.startDate = "";
@@ -3067,6 +3653,10 @@
       return Number(value || 0).toLocaleString("pt-BR");
     }
 
+    function formatDecimal(value) {
+      return Number(value || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
     function escapeHtml(value) {
       return String(value ?? "")
         .replaceAll("&", "&amp;")
@@ -3084,6 +3674,6 @@
       }, 6500);
     }
   </script>
-<!-- versao: senha-importacao-reforcada -->
+<!-- versao: historico-cumulativo-firebase -->
 </body>
 </html>
