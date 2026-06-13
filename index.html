@@ -1221,13 +1221,13 @@
     }
 
     .presentation.tv-force-ranking .scorecard {
-      min-height: 58;
-      padding: 9px 12x;
+      min-height: 58px;
+      padding: 9px 12px;
       border-radius: 14px;
     }
 
     .presentation.tv-force-ranking .scorecard span {
-      font-size: 11x;
+      font-size: 11px;
       line-height: 1;
     }
 
@@ -3009,7 +3009,9 @@
         fileName: state.fileName,
         importedAt: state.importedAt,
         updatedAt: new Date().toISOString(),
-        rows: state.rows,
+        // Remove o campo legado "rows" do documento principal.
+        // Os dados agora ficam na subcoleção "registros" para evitar o limite de 1 MB por documento.
+        rows: firebase.firestore.FieldValue.delete(),
         settings: {
           periodMode: state.periodMode,
           startDate: state.startDate,
@@ -3020,22 +3022,112 @@
       };
     }
 
+    function getPanelRef() {
+      return state.db
+        .collection(FIREBASE_COLLECTION)
+        .doc(FIREBASE_DOCUMENT);
+    }
+
+    function getRegistroId(row) {
+      const safePart = value => normalizeName(value)
+        .replace(/[^A-Z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 120) || "SEM-VALOR";
+
+      return [
+        row.date || "SEM-DATA",
+        safePart(row.technician),
+        safePart(row.group)
+      ].join("__");
+    }
+
+    function rowToCloudData(row) {
+      const normalized = cloneHistoricalRow(row);
+
+      return {
+        date: normalized.date,
+        technician: normalized.technician,
+        group: normalized.group,
+        quantity: Number(normalized.quantity || 0),
+        notes: {
+          1: Number(normalized.notes?.[1] || 0),
+          2: Number(normalized.notes?.[2] || 0),
+          3: Number(normalized.notes?.[3] || 0),
+          4: Number(normalized.notes?.[4] || 0),
+          5: Number(normalized.notes?.[5] || 0)
+        },
+        totalRatings: Number(normalized.totalRatings || 0),
+        ratingSum: Number(normalized.ratingSum || 0),
+        comment: normalized.comment || "",
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    function cloudDataToRow(data) {
+      const notes = data.notes || {};
+
+      const row = {
+        date: data.date,
+        technician: data.technician,
+        group: data.group,
+        quantity: Number(data.quantity || 0),
+        notes: {
+          5: Number(notes[5] ?? data.note5 ?? 0),
+          4: Number(notes[4] ?? data.note4 ?? 0),
+          3: Number(notes[3] ?? data.note3 ?? 0),
+          2: Number(notes[2] ?? data.note2 ?? 0),
+          1: Number(notes[1] ?? data.note1 ?? 0)
+        },
+        comment: data.comment || ""
+      };
+
+      return cloneHistoricalRow(row);
+    }
+
+    async function commitBatchIfNeeded(batch, count) {
+      if (count > 0) await batch.commit();
+    }
+
     async function saveToCloud(showSuccess = true) {
       if (!state.firebaseReady || !state.db || !state.rows.length) return false;
 
       try {
-        await state.db
-          .collection(FIREBASE_COLLECTION)
-          .doc(FIREBASE_DOCUMENT)
-          .set(buildCloudPayload(), { merge: true });
+        const panelRef = getPanelRef();
+
+        await panelRef.set(buildCloudPayload(), { merge: true });
+
+        const rows = collapseRowsByHistoricalKey(state.rows);
+        const batchSize = 400;
+        let batch = state.db.batch();
+        let pendingWrites = 0;
+        let savedCount = 0;
+
+        for (const row of rows) {
+          const registroId = getRegistroId(row);
+          const registroRef = panelRef.collection("registros").doc(registroId);
+
+          batch.set(registroRef, rowToCloudData(row), { merge: true });
+          pendingWrites++;
+          savedCount++;
+
+          if (pendingWrites >= batchSize) {
+            await batch.commit();
+            batch = state.db.batch();
+            pendingWrites = 0;
+          }
+        }
+
+        await commitBatchIfNeeded(batch, pendingWrites);
 
         updateFirebaseStatus("Sincronizado", true);
-        if (showSuccess) showMessage("Histórico salvo no Firebase com sucesso.", "info");
+        if (showSuccess) {
+          showMessage(`Histórico salvo no Firebase com sucesso. ${savedCount.toLocaleString("pt-BR")} registros sincronizados.`, "info");
+        }
         return true;
       } catch (error) {
         console.error(error);
         updateFirebaseStatus("Erro ao salvar", false);
-        if (showSuccess) showMessage("Não foi possível salvar no Firebase. Verifique as regras do Firestore.", "error");
+        if (showSuccess) showMessage("Não foi possível salvar no Firebase. Confira as regras e o Console do navegador.", "error");
         return false;
       }
     }
@@ -3044,14 +3136,27 @@
       if (!state.firebaseReady || !state.db) return [];
 
       try {
-        const doc = await state.db.collection(FIREBASE_COLLECTION).doc(FIREBASE_DOCUMENT).get();
-        if (!doc.exists) return [];
+        const panelRef = getPanelRef();
+        const snapshot = await panelRef.collection("registros").get();
 
-        const data = doc.data();
-        if (!data.rows || !Array.isArray(data.rows) || !data.rows.length) return [];
+        if (!snapshot.empty) {
+          const rows = [];
+          snapshot.forEach(doc => rows.push(cloudDataToRow(doc.data())));
+          const processed = processRows(rowsToRawRows(rows));
+          return processed.rows;
+        }
 
-        const processed = processRows(rowsToRawRows(data.rows));
-        return processed.rows;
+        // Compatibilidade com versões antigas que salvavam tudo dentro do documento principal.
+        const legacyDoc = await panelRef.get();
+        if (legacyDoc.exists) {
+          const legacyData = legacyDoc.data();
+          if (legacyData.rows && Array.isArray(legacyData.rows) && legacyData.rows.length) {
+            const processed = processRows(rowsToRawRows(legacyData.rows));
+            return processed.rows;
+          }
+        }
+
+        return [];
       } catch (error) {
         console.error(error);
         if (showErrors) showMessage("Não foi possível buscar o histórico no Firebase para mesclar os dados.", "error");
@@ -3063,37 +3168,30 @@
       if (!state.firebaseReady || !state.db) return false;
 
       try {
-        const doc = await state.db.collection(FIREBASE_COLLECTION).doc(FIREBASE_DOCUMENT).get();
+        const panelRef = getPanelRef();
+        const metaDoc = await panelRef.get();
+        const meta = metaDoc.exists ? metaDoc.data() : {};
 
-        if (!doc.exists) {
-          if (showSuccess) showMessage("Firebase conectado, mas ainda não há dados salvos na nuvem.", "info");
-          return false;
-        }
+        const rows = await getRowsFromCloud(false);
 
-        const data = doc.data();
-        if (!data.rows || !Array.isArray(data.rows)) {
-          showMessage("O documento do Firebase não possui dados de ranking válidos.", "error");
-          return false;
-        }
-
-        if (!data.rows.length) {
+        if (!rows.length) {
           resetState();
           renderAll();
           updateFirebaseStatus("Histórico vazio", true);
-          if (showSuccess) showMessage("Firebase conectado, mas o histórico está vazio.", "info");
+          if (showSuccess) showMessage("Firebase conectado, mas ainda não há registros salvos.", "info");
           return false;
         }
 
-        state.fileName = data.fileName || "Firebase";
-        state.importedAt = data.importedAt || "";
-        state.rows = data.rows;
+        state.fileName = meta.fileName || "Firebase";
+        state.importedAt = meta.importedAt || "";
+        state.rows = rows;
 
-        if (data.settings) {
-          state.periodMode = data.settings.periodMode || state.periodMode;
-          state.startDate = data.settings.startDate || state.startDate;
-          state.endDate = data.settings.endDate || state.endDate;
-          state.carouselEnabled = data.settings.carouselEnabled ?? state.carouselEnabled;
-          setTheme(data.settings.theme || state.theme);
+        if (meta.settings) {
+          state.periodMode = meta.settings.periodMode || state.periodMode;
+          state.startDate = meta.settings.startDate || state.startDate;
+          state.endDate = meta.settings.endDate || state.endDate;
+          state.carouselEnabled = meta.settings.carouselEnabled ?? state.carouselEnabled;
+          setTheme(meta.settings.theme || state.theme);
         }
 
         const processed = processRows(rowsToRawRows(state.rows));
@@ -3106,7 +3204,7 @@
         renderAll();
 
         updateFirebaseStatus("Carregado", true);
-        if (showSuccess) showMessage("Dados carregados do Firebase com sucesso.", "info");
+        if (showSuccess) showMessage(`Histórico carregado do Firebase com sucesso. ${state.rows.length.toLocaleString("pt-BR")} registros.`, "info");
         return true;
       } catch (error) {
         console.error(error);
@@ -3120,25 +3218,43 @@
       if (!state.firebaseReady || !state.db) return false;
 
       try {
-        await state.db
-          .collection(FIREBASE_COLLECTION)
-          .doc(FIREBASE_DOCUMENT)
-          .set({
-            fileName: "Histórico limpo",
-            importedAt: "",
-            updatedAt: new Date().toISOString(),
-            rows: [],
-            settings: {
-              periodMode: state.periodMode,
-              startDate: state.startDate,
-              endDate: state.endDate,
-              theme: state.theme,
-              carouselEnabled: state.carouselEnabled
-            }
-          }, { merge: false });
+        const panelRef = getPanelRef();
+        const snapshot = await panelRef.collection("registros").get();
+
+        const batchSize = 400;
+        let batch = state.db.batch();
+        let pendingDeletes = 0;
+        let deletedCount = 0;
+
+        for (const doc of snapshot.docs) {
+          batch.delete(doc.ref);
+          pendingDeletes++;
+          deletedCount++;
+
+          if (pendingDeletes >= batchSize) {
+            await batch.commit();
+            batch = state.db.batch();
+            pendingDeletes = 0;
+          }
+        }
+
+        await commitBatchIfNeeded(batch, pendingDeletes);
+
+        await panelRef.set({
+          fileName: "Histórico limpo",
+          importedAt: "",
+          updatedAt: new Date().toISOString(),
+          settings: {
+            periodMode: state.periodMode,
+            startDate: state.startDate,
+            endDate: state.endDate,
+            theme: state.theme,
+            carouselEnabled: state.carouselEnabled
+          }
+        }, { merge: false });
 
         updateFirebaseStatus("Histórico limpo", true);
-        showMessage("Histórico local e Firebase foram limpos.", "info");
+        showMessage(`Histórico local e Firebase foram limpos. ${deletedCount.toLocaleString("pt-BR")} registros removidos da nuvem.`, "info");
         return true;
       } catch (error) {
         console.error(error);
@@ -3691,6 +3807,6 @@
       }, 6500);
     }
   </script>
-<!-- versao: historico-cumulativo-firebase -->
+<!-- versao: historico-cumulativo-firebase-subcolecao -->
 </body>
 </html>
