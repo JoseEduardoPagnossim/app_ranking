@@ -3009,9 +3009,6 @@
         fileName: state.fileName,
         importedAt: state.importedAt,
         updatedAt: new Date().toISOString(),
-        // Remove o campo legado "rows" do documento principal.
-        // Os dados agora ficam na subcoleção "registros" para evitar o limite de 1 MB por documento.
-        rows: firebase.firestore.FieldValue.delete(),
         settings: {
           periodMode: state.periodMode,
           startDate: state.startDate,
@@ -3264,6 +3261,11 @@
       }
     }
 
+    function parseSyncTimestamp(value) {
+      const time = value ? new Date(value).getTime() : 0;
+      return Number.isFinite(time) ? time : 0;
+    }
+
     async function syncWithCloud() {
       if (!state.firebaseReady) {
         const ok = initFirebaseFromStorage();
@@ -3273,10 +3275,85 @@
         }
       }
 
-      if (state.rows.length) {
-        await saveToCloud(true);
-      } else {
-        await loadFromCloud(true);
+      if (!state.firebaseReady || !state.db) {
+        showMessage("Firebase não está configurado para sincronização.", "error");
+        return;
+      }
+
+      try {
+        updateFirebaseStatus("Sincronizando", true);
+
+        const panelRef = getPanelRef();
+        const metaDoc = await panelRef.get();
+        const meta = metaDoc.exists ? metaDoc.data() : {};
+        const cloudRows = await getRowsFromCloud(false);
+        const localRows = collapseRowsByHistoricalKey(state.rows || []);
+
+        if (!localRows.length && !cloudRows.length) {
+          updateFirebaseStatus("Histórico vazio", true);
+          showMessage("Firebase conectado, mas ainda não há dados locais ou registros salvos na nuvem.", "info");
+          return;
+        }
+
+        let mergedRows = [];
+        let sourceMessage = "";
+
+        if (!localRows.length && cloudRows.length) {
+          mergedRows = cloudRows;
+          sourceMessage = "Dados carregados do Firebase.";
+        } else if (localRows.length && !cloudRows.length) {
+          mergedRows = localRows;
+          sourceMessage = "Dados locais enviados para o Firebase.";
+        } else {
+          const cloudTime = parseSyncTimestamp(meta.updatedAt || meta.importedAt);
+          const localTime = parseSyncTimestamp(state.importedAt);
+          const localIsNewer = localTime && (!cloudTime || localTime > cloudTime);
+
+          // A segunda lista prevalece quando existe o mesmo data+técnico+grupo.
+          // Se o local acabou de receber uma importação, ele prevalece nos conflitos.
+          // Caso contrário, a nuvem prevalece para atualizar telas/navegadores antigos.
+          mergedRows = localIsNewer
+            ? mergeHistoricalRows(cloudRows, localRows)
+            : mergeHistoricalRows(localRows, cloudRows);
+
+          sourceMessage = localIsNewer
+            ? "Histórico mesclado: importação local mais recente enviada para o Firebase."
+            : "Histórico mesclado: dados mais recentes do Firebase carregados nesta página.";
+        }
+
+        const processed = processRows(rowsToRawRows(mergedRows));
+
+        state.rows = processed.rows;
+        state.groups = processed.groups;
+        state.fileName = state.fileName || meta.fileName || "Firebase";
+        state.importedAt = state.importedAt || meta.importedAt || new Date().toISOString();
+
+        if (meta.settings) {
+          state.periodMode = state.periodMode || meta.settings.periodMode || "currentMonth";
+          state.startDate = state.startDate || meta.settings.startDate || "";
+          state.endDate = state.endDate || meta.settings.endDate || "";
+          state.carouselEnabled = state.carouselEnabled ?? meta.settings.carouselEnabled ?? state.carouselEnabled;
+          setTheme(state.theme || meta.settings.theme || "classico");
+        }
+
+        rebuildRankingsFromPeriod();
+        saveToStorage();
+        saveSettings();
+        renderAll();
+
+        const saved = await saveToCloud(false);
+        if (!saved) {
+          updateFirebaseStatus("Erro ao salvar", false);
+          showMessage("Consegui mesclar os dados na tela, mas não consegui salvar o resultado no Firebase. Veja o Console do navegador.", "error");
+          return;
+        }
+
+        updateFirebaseStatus("Sincronizado", true);
+        showMessage(`${sourceMessage} Total atual: ${state.rows.length.toLocaleString("pt-BR")} registros históricos.`, "info");
+      } catch (error) {
+        console.error(error);
+        updateFirebaseStatus("Erro ao sincronizar", false);
+        showMessage("Não foi possível sincronizar com o Firebase. Verifique conexão, regras e Console do navegador.", "error");
       }
     }
 
@@ -3807,6 +3884,6 @@
       }, 6500);
     }
   </script>
-<!-- versao: historico-cumulativo-firebase-subcolecao -->
+<!-- versao: historico-cumulativo-firebase-subcolecao-sync-merge -->
 </body>
 </html>
