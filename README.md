@@ -270,3 +270,7 @@ A página é estática e pode ser hospedada gratuitamente no GitHub Pages.
 Sem Firebase, os dados ficam salvos apenas no navegador em que a planilha foi importada.
 
 Com Firebase configurado, os dados podem ser compartilhados entre computadores e TVs, mantendo o histórico acumulado.
+
+## Ajuste no modo apresentação dos rankings por grupo
+
+No modo apresentação, as abas **Finalizados por grupo** e **Notas por grupo** agora são exibidas em formato de tabela, com as colunas visíveis. Isso permite visualizar as informações completas do período, incluindo total, média e percentual no ranking de notas por grupo.

@@ -1851,6 +1851,184 @@
       }
     }
 
+
+
+    /* No modo apresentação, os rankings por grupo ficam em formato de tabela
+       para exibir todas as colunas: total, média e percentual. */
+    .presentation.group-mode .rank-columns {
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      height: 100%;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .presentation.group-mode .rank-column {
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+      border: 0 !important;
+    }
+
+    .presentation.group-mode #rightTable {
+      display: none !important;
+    }
+
+    .presentation.group-mode table {
+      min-width: 0;
+      width: 100%;
+      height: auto;
+      border-collapse: collapse;
+      border-spacing: 0;
+      padding: 0;
+      table-layout: fixed;
+      background: #ffffff;
+    }
+
+    .presentation.group-mode thead {
+      display: table-header-group !important;
+    }
+
+    .presentation.group-mode tbody {
+      display: table-row-group !important;
+      height: auto;
+      align-content: initial;
+    }
+
+    .presentation.group-mode tr,
+    .presentation.group-mode.tv-ultra-compact tr,
+    .presentation.group-mode.tv-mega-compact tr {
+      display: table-row !important;
+      min-height: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      overflow: visible;
+      position: static;
+      background: transparent;
+    }
+
+    .presentation.group-mode tr::after {
+      display: none !important;
+    }
+
+    .presentation.group-mode tr:nth-child(1) {
+      background: linear-gradient(90deg, #fffbea, #f7fffa);
+    }
+
+    .presentation.group-mode tr:nth-child(2) {
+      background: linear-gradient(90deg, #f8fafc, #eff6ff);
+    }
+
+    .presentation.group-mode tr:nth-child(3) {
+      background: linear-gradient(90deg, #fff7ed, #f8fafc);
+    }
+
+    .presentation.group-mode th,
+    .presentation.group-mode td {
+      display: table-cell !important;
+      height: var(--tv-row-height, 24px) !important;
+      padding: 3px 7px;
+      border-bottom: 1px solid #e4ebf3;
+      background: transparent;
+      line-height: 1.05;
+      position: static;
+      z-index: auto;
+      vertical-align: middle;
+    }
+
+    .presentation.group-mode th {
+      background: #f6f9fd;
+      color: #476078;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .presentation.group-mode .pos-cell,
+    .presentation.group-mode.tv-ultra-compact .pos-cell,
+    .presentation.group-mode.tv-mega-compact .pos-cell {
+      width: 64px;
+      font-size: clamp(10px, .85vw, 15px);
+      letter-spacing: -.02em;
+      color: #0f2138;
+    }
+
+    .presentation.group-mode .tech,
+    .presentation.group-mode.tv-ultra-compact .tech,
+    .presentation.group-mode.tv-mega-compact .tech {
+      font-size: clamp(12px, 1.05vw, 18px);
+      letter-spacing: -.03em;
+      color: #061222;
+      text-align: left;
+    }
+
+    .presentation.group-mode .num,
+    .presentation.group-mode.tv-ultra-compact .num,
+    .presentation.group-mode.tv-mega-compact .num {
+      width: auto;
+      font-size: clamp(11px, .95vw, 16px);
+      letter-spacing: -.02em;
+      color: #061222;
+      text-align: right;
+    }
+
+    .presentation.group-mode .squad,
+    .presentation.group-mode .move,
+    .presentation.group-mode .status,
+    .presentation.group-mode th:nth-child(3),
+    .presentation.group-mode td:nth-child(3),
+    .presentation.group-mode th:nth-child(5),
+    .presentation.group-mode td:nth-child(5),
+    .presentation.group-mode th:nth-child(6),
+    .presentation.group-mode td:nth-child(6),
+    .presentation.group-mode th:nth-child(7),
+    .presentation.group-mode td:nth-child(7) {
+      display: table-cell !important;
+    }
+
+    .presentation.group-mode .squad {
+      width: 58px;
+      text-align: center;
+    }
+
+    .presentation.group-mode .move {
+      width: 72px;
+      text-align: center;
+    }
+
+    .presentation.group-mode .status {
+      width: 82px;
+      text-align: center;
+    }
+
+    .presentation.group-mode .squad-badge {
+      min-width: 26px;
+      height: 20px;
+      font-size: 9px;
+      border-radius: 7px;
+    }
+
+    .presentation.group-mode .move-badge {
+      padding: 2px 6px;
+      font-size: 9px;
+    }
+
+    .presentation.group-mode .status-badge {
+      min-width: 58px;
+      padding: 2px 5px;
+      font-size: 9px;
+    }
+
+    .presentation.group-mode .medal {
+      width: 14px;
+      height: 14px;
+      font-size: 9px;
+      margin-left: 4px;
+      vertical-align: middle;
+    }
+
     @media (max-width: 1180px) {
       .quality-strip { grid-template-columns: 1fr; }
       .praise-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -3543,7 +3721,7 @@
         els.rankingTitle.textContent = "Total Notas";
         els.rankingSubtitle.textContent = "Soma a quantidade de avaliações por técnico dentro do período filtrado.";
       } else if (state.activeMode === "group") {
-        els.rankingTitle.textContent = "Ranking finalizados por grupo";
+        els.rankingTitle.textContent = "Ranking por grupo";
         els.rankingSubtitle.textContent = "Soma os atendimentos por grupo dentro do período filtrado.";
       } else if (state.activeMode === "notesGroup") {
         els.rankingTitle.textContent = "Ranking de notas por grupo";
