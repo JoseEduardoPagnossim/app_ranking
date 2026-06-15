@@ -2033,11 +2033,11 @@
 
     <nav class="tabs-bar">
       <div class="tabs">
-        <button class="tab" id="dayTab" type="button">Classificação do dia</button>
+        <button class="tab" id="dayTab" type="button">Finalizados do Dia</button>
         <button class="tab" id="notesDayTab" type="button">Notas do dia</button>
-        <button class="tab active" id="generalTab" type="button">Classificação geral</button>
-        <button class="tab" id="notesGeneralTab" type="button">Notas geral</button>
-        <button class="tab" id="groupTab" type="button">Ranking por grupo</button>
+        <button class="tab active" id="generalTab" type="button">Qtd. Finalizados Geral</button>
+        <button class="tab" id="notesGeneralTab" type="button">Qtd. Notas Geral</button>
+        <button class="tab" id="groupTab" type="button">Finalizados por grupo</button>
       </div>
       <div class="auto-note" id="autoNote">Alternância automática: 30s • 2 colunas</div>
     </nav>
@@ -2045,8 +2045,8 @@
     <section class="ranking-panel">
       <div class="ranking-head">
         <div>
-          <h2 id="rankingTitle">Classificação geral</h2>
-          <p id="rankingSubtitle">Soma as rodadas do período filtrado, estilo pontos corridos.</p>
+          <h2 id="rankingTitle">Total Finalizados</h2>
+          <p id="rankingSubtitle">Soma as rodadas do período filtrado</p>
         </div>
 
         <div class="filters">
@@ -2094,7 +2094,8 @@
       "Heitor Drago Gois",
       "João Paulo Cardoso",
       "Eduardo Thomaz",
-      "Renata Romão"
+      "Renata Romão",
+      "LETICIA SANCHES"
     ].map(normalizeName);
 
     const state = {
@@ -3478,20 +3479,20 @@
       els.carouselBtn.textContent = state.carouselEnabled ? "🎠 Carrossel ON" : "🎠 Carrossel OFF";
 
       if (state.activeMode === "day") {
-        els.rankingTitle.textContent = "Classificação do dia";
+        els.rankingTitle.textContent = "Ranking Att Finalizado do Dia";
         els.rankingSubtitle.textContent = "Mostra somente a última rodada encontrada na planilha.";
       } else if (state.activeMode === "notesDay") {
-        els.rankingTitle.textContent = "Ranking de notas do dia";
+        els.rankingTitle.textContent = "Ranking de Notas do dia";
         els.rankingSubtitle.textContent = "Soma a quantidade de avaliações recebidas por técnico na última data do período.";
       } else if (state.activeMode === "notesGeneral") {
-        els.rankingTitle.textContent = "Ranking geral de notas";
+        els.rankingTitle.textContent = "Total Notas";
         els.rankingSubtitle.textContent = "Soma a quantidade de avaliações por técnico dentro do período filtrado.";
       } else if (state.activeMode === "group") {
         els.rankingTitle.textContent = "Ranking por grupo";
         els.rankingSubtitle.textContent = "Soma os atendimentos por grupo dentro do período filtrado.";
       } else {
-        els.rankingTitle.textContent = "Classificação geral";
-        els.rankingSubtitle.textContent = "Soma as rodadas do período filtrado, estilo pontos corridos.";
+        els.rankingTitle.textContent = "Total Finalizados";
+        els.rankingSubtitle.textContent = "Soma as rodadas do período filtrado.";
       }
     }
 
