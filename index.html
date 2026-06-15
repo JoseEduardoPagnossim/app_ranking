@@ -80,6 +80,161 @@
       padding: 0 4px 32px;
     }
 
+
+    .brand-block {
+      width: 100%;
+    }
+
+    .menu-toggle {
+      position: fixed;
+      top: 18px;
+      left: 18px;
+      z-index: 1200;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 11px 16px;
+      border-radius: 999px;
+      color: #061222;
+      background: linear-gradient(135deg, #ffffff, #e9f6ff);
+      border: 1px solid rgba(15, 41, 72, .18);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, .18);
+    }
+
+    .side-menu-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1290;
+      background: rgba(3, 13, 25, .48);
+      backdrop-filter: blur(3px);
+    }
+
+    .side-menu-overlay[hidden] {
+      display: none;
+    }
+
+    .actions.side-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1300;
+      width: min(390px, calc(100vw - 28px));
+      height: 100vh;
+      margin: 0;
+      padding: 18px;
+      border-radius: 0 28px 28px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+      gap: 14px;
+      overflow-y: auto;
+      transform: translateX(calc(-100% - 24px));
+      transition: transform .24s ease, box-shadow .24s ease;
+      color: #0f2948;
+      background: linear-gradient(180deg, rgba(247, 252, 255, .98), rgba(230, 242, 255, .98));
+      border: 1px solid rgba(15, 41, 72, .12);
+      box-shadow: 24px 0 70px rgba(3, 13, 25, .30);
+    }
+
+    body.side-menu-open .actions.side-menu {
+      transform: translateX(0);
+    }
+
+    .side-menu-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 4px 2px 12px;
+      border-bottom: 1px solid rgba(15, 41, 72, .10);
+    }
+
+    .side-menu-head strong {
+      display: block;
+      font-size: 18px;
+      font-weight: 1000;
+      letter-spacing: -.02em;
+      color: #071827;
+    }
+
+    .side-menu-head small {
+      display: block;
+      margin-top: 3px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #52657d;
+    }
+
+    .side-menu-close {
+      width: 38px;
+      min-height: 38px;
+      padding: 0;
+      border-radius: 999px;
+      font-size: 24px;
+      line-height: 1;
+      color: #0f2948;
+      background: rgba(15, 41, 72, .08);
+      box-shadow: none;
+    }
+
+    .side-menu-section {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 9px;
+      padding: 10px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, .58);
+      border: 1px solid rgba(15, 41, 72, .08);
+    }
+
+    .side-menu-section-danger {
+      background: rgba(239, 68, 68, .07);
+      border-color: rgba(239, 68, 68, .16);
+    }
+
+    .side-menu-label {
+      margin: 0 2px 2px;
+      color: #52657d;
+      font-size: 11px;
+      font-weight: 1000;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .actions.side-menu button,
+    .actions.side-menu .file-label,
+    .actions.side-menu .theme-select,
+    .actions.side-menu .firebase-status {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+      min-height: 44px;
+      margin: 0;
+    }
+
+    .actions.side-menu .theme-select {
+      color: #0f2948;
+      background: linear-gradient(180deg, #ffffff, #eaf3ff);
+      border: 1px solid rgba(15, 41, 72, .18);
+    }
+
+    .actions.side-menu .firebase-status {
+      display: inline-flex;
+      color: #064e3b;
+      background: rgba(34, 197, 94, .16);
+      border: 1px solid rgba(22, 163, 74, .24);
+    }
+
+    body.presentation .menu-toggle,
+    body.presentation .side-menu-overlay,
+    body.presentation .actions.side-menu {
+      display: none !important;
+    }
+
     .eyebrow {
       display: inline-flex;
       gap: 9px;
@@ -2469,15 +2624,328 @@
         transition: none !important;
       }
     }
+
+    /* Responsividade geral */
+    @media (max-width: 1400px) {
+      .scorecards {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .ranking-columns {
+        grid-template-columns: 1fr !important;
+      }
+
+      .table-wrap + .table-wrap {
+        margin-top: 12px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .app {
+        width: min(100%, calc(100% - 16px));
+        padding: 12px 0 22px;
+      }
+
+      .topbar {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        padding: 18px;
+        text-align: center;
+      }
+
+      h1,
+      .main-title {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        font-size: clamp(28px, 9vw, 42px);
+        letter-spacing: -.04em;
+      }
+
+      .title-logo {
+        width: 92px;
+        max-height: 72px;
+        transform: none;
+      }
+
+      .actions,
+      .filters,
+      .period-filter {
+        width: 100%;
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 6px;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .actions > *,
+      .filters > *,
+      .period-filter > * {
+        flex: 0 0 auto;
+      }
+
+      .data-status {
+        border-radius: 18px;
+        align-items: flex-start;
+        gap: 6px;
+        padding: 10px 12px;
+        flex-direction: column;
+        text-align: left;
+      }
+
+      .data-status span {
+        white-space: normal;
+      }
+
+      .scorecards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .scorecard {
+        min-height: 108px;
+        padding: 14px 12px;
+      }
+
+      .tabs {
+        width: 100%;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        padding-bottom: 6px;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .tab {
+        flex: 0 0 auto;
+        white-space: nowrap;
+      }
+
+      .spotlight {
+        grid-template-columns: 1fr;
+      }
+
+      .ranking-panel {
+        border-radius: 18px;
+      }
+
+      .ranking-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .ranking-table .row,
+      .ranking-table .table-header {
+        grid-template-columns: 48px minmax(150px, 1fr) minmax(82px, auto) minmax(76px, auto);
+        gap: 8px;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .scorecards {
+        grid-template-columns: 1fr;
+      }
+
+      .actions button,
+      .actions .file-label,
+      .actions .theme-select,
+      .filters button,
+      .filters input,
+      .filters select,
+      .period-filter input,
+      .period-filter select {
+        min-height: 42px;
+        font-size: 13px;
+      }
+
+      .title-logo {
+        width: 78px;
+      }
+
+      .ranking-table {
+        overflow-x: auto;
+      }
+
+      .ranking-table .row,
+      .ranking-table .table-header {
+        min-width: 560px;
+      }
+    }
+
+
+    /* Correções finais de responsividade para celular */
+    @media (max-width: 720px) {
+      .tabs-bar {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: 8px;
+        min-height: 0;
+        margin: 8px 0 10px;
+        overflow: visible;
+      }
+
+      .tabs {
+        width: 100%;
+        max-width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        overflow-x: auto;
+        overflow-y: hidden;
+        flex-wrap: nowrap;
+        gap: 8px;
+        padding: 5px;
+        border-radius: 18px;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .tabs::-webkit-scrollbar,
+      .actions::-webkit-scrollbar,
+      .filters::-webkit-scrollbar,
+      .period-filter::-webkit-scrollbar {
+        height: 5px;
+      }
+
+      .tabs::-webkit-scrollbar-thumb,
+      .actions::-webkit-scrollbar-thumb,
+      .filters::-webkit-scrollbar-thumb,
+      .period-filter::-webkit-scrollbar-thumb {
+        background: rgba(15, 41, 72, .22);
+        border-radius: 999px;
+      }
+
+      .tab,
+      .tabs .tab {
+        width: auto !important;
+        flex: 0 0 auto;
+        min-width: max-content;
+        padding: 9px 16px;
+        scroll-snap-align: start;
+      }
+
+      .auto-note {
+        position: static;
+        align-self: flex-end;
+        width: auto;
+        max-width: 100%;
+        padding: 6px 10px;
+        font-size: 12px;
+        line-height: 1.2;
+        white-space: nowrap;
+      }
+
+      .actions button,
+      .actions .file-label,
+      .actions .theme-select,
+      .filters button,
+      .filters input,
+      .filters select,
+      .period-filter button,
+      .period-filter input,
+      .period-filter select {
+        width: auto !important;
+        flex: 0 0 auto;
+      }
+
+      .filters input[type="search"],
+      .filters input[type="text"],
+      .filters .search-input {
+        min-width: 220px;
+      }
+
+      .auth-modal {
+        align-items: flex-start;
+        padding-top: 22px;
+      }
+
+      .auth-card {
+        width: min(420px, calc(100vw - 22px));
+      }
+    }
+
+    @media (max-width: 420px) {
+      .tab,
+      .tabs .tab {
+        padding: 8px 13px;
+        font-size: 13px;
+      }
+
+      .auto-note {
+        align-self: flex-start;
+        font-size: 11px;
+        white-space: normal;
+      }
+
+      .ranking-head h2 {
+        font-size: clamp(24px, 8vw, 34px);
+      }
+    }
+
+
+    /* Sidebar: ajustes finais e mobile */
+    body.side-menu-open {
+      overflow: hidden;
+    }
+
+    body.theme-claro .actions.side-menu {
+      background: linear-gradient(180deg, rgba(247, 252, 255, .98), rgba(230, 242, 255, .98));
+      border: 1px solid rgba(15, 41, 72, .12);
+      box-shadow: 24px 0 70px rgba(3, 13, 25, .30);
+    }
+
+    @media (max-width: 720px) {
+      .menu-toggle {
+        top: 10px;
+        left: 10px;
+        min-height: 40px;
+        padding: 9px 13px;
+        font-size: 13px;
+      }
+
+      .topbar {
+        padding-top: 52px;
+      }
+
+      .actions.side-menu {
+        width: min(340px, calc(100vw - 22px));
+        padding: 14px;
+        border-radius: 0 22px 22px 0;
+        overflow-x: hidden;
+      }
+
+      .actions.side-menu button,
+      .actions.side-menu .file-label,
+      .actions.side-menu .theme-select,
+      .actions.side-menu .firebase-status {
+        width: 100% !important;
+        flex: initial;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .actions.side-menu {
+        width: calc(100vw - 14px);
+      }
+    }
+
   </style>
 </head>
 
 <body>
   <div class="app">
     <header class="topbar">
-      <div>
+      <button class="menu-toggle" id="menuToggleBtn" type="button" aria-controls="sideMenu" aria-expanded="false">☰ Menu</button>
+
+      <div class="brand-block">
         <!--<div class="eyebrow">🏆 TV Ranking • Estilo transmissão</div>-->
-        <h1>
+        <h1 class="main-title">
           <img src="soften-logo.png" alt="Soften Sistemas" class="title-logo">
           <span>Performance Suporte Técnico</span>
         </h1>
@@ -2485,13 +2953,30 @@
         <div id="message" class="message"></div>
       </div>
 
-      <div class="actions">
+      <aside class="actions side-menu" id="sideMenu" aria-label="Menu de ações do painel">
+        <div class="side-menu-head">
+          <div>
+            <strong>Menu do painel</strong>
+            <small>Ações, sincronização e visualização</small>
+          </div>
+          <button class="side-menu-close" id="sideMenuCloseBtn" type="button" aria-label="Fechar menu">×</button>
+        </div>
+
+        <div class="side-menu-section">
+          <span class="side-menu-label">Dados</span>
         <label class="file-label">
           ⬆️ Importar CSV
           <input id="fileInput" type="file"
             accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">
         </label>
         <button class="btn-dark" id="reloadSavedBtn" type="button">🔄 Recarregar</button>
+        <button class="btn-dark" id="refreshCloudBtn" type="button">☁️ Atualizar da nuvem</button>
+        <button class="btn-dark" id="syncCloudBtn" type="button">↕️ Sync</button>
+        <span class="firebase-status" id="firebaseStatus">☁️ Local</span>
+        </div>
+
+        <div class="side-menu-section">
+          <span class="side-menu-label">Visualização</span>
         <select class="theme-select" id="themeSelect" title="Tema visual">
           <option value="classico">Tema Clássico</option>
           <option value="soften">Tema Soften</option>
@@ -2504,16 +2989,24 @@
           <option value="verde">Tema Verde</option>
         </select>
         <button class="btn-ghost" id="carouselBtn" type="button">🎠 Carrossel ON</button>
-        <button class="btn-dark" id="firebaseConfigBtn" type="button">☁️ Firebase</button>
-        <button class="btn-dark" id="authBtn" type="button">🔐 Entrar</button>
-        <button class="btn-dark" id="syncCloudBtn" type="button">↕️ Sync</button>
-        <button class="btn-dark" id="refreshCloudBtn" type="button">☁️ Atualizar da nuvem</button>
-        <span class="firebase-status" id="firebaseStatus">☁️ Local</span>
         <button class="btn-yellow" id="presentationBtn" type="button">🖥️ Modo apresentação</button>
         <button class="btn-ghost" id="layoutBtn" type="button">2 colunas</button>
+        </div>
+
+        <div class="side-menu-section">
+          <span class="side-menu-label">Acesso</span>
+        <button class="btn-dark" id="authBtn" type="button">🔐 Entrar</button>
+        <button class="btn-dark" id="firebaseConfigBtn" type="button" hidden>☁️ Firebase</button>
+        </div>
+
+        <div class="side-menu-section side-menu-section-danger">
+          <span class="side-menu-label">Perigo</span>
         <button class="btn-danger" id="clearBtn" type="button">🗑️ Limpar</button>
-      </div>
+        </div>
+      </aside>
     </header>
+
+    <div class="side-menu-overlay" id="sideMenuOverlay" hidden></div>
 
     <div class="data-status" id="dataStatus">
       <span>Fonte: <strong id="dataSourceText">Local</strong></span>
@@ -2665,6 +3158,14 @@
       appId: "1:818776904500:web:440ac8a0a77bfea1d44b61"
     };
 
+    // E-mails que podem visualizar/reconfigurar o JSON do Firebase pela interface.
+    // Deixe a lista vazia para permitir qualquer usuário logado no Firebase Auth.
+    // Para restringir ainda mais, adicione os e-mails aqui, mantendo em linha com as regras do Firestore.
+    const FIREBASE_CONFIG_ALLOWED_EMAILS = [
+      "josepagnossim@softensistemas.com.br"
+      // "contato@softensistemas.com.br"
+    ].map(email => email.trim().toLowerCase());
+
     const EXCLUDED_TECHNICIANS = [
       "Jose Eduardo Pagnossim",
       "Heitor Drago Gois",
@@ -2759,12 +3260,54 @@
       presentationBtn: document.getElementById("presentationBtn"),
       layoutBtn: document.getElementById("layoutBtn"),
       clearBtn: document.getElementById("clearBtn"),
-      autoNote: document.getElementById("autoNote")
+      autoNote: document.getElementById("autoNote"),
+      menuToggleBtn: document.getElementById("menuToggleBtn"),
+      sideMenu: document.getElementById("sideMenu"),
+      sideMenuCloseBtn: document.getElementById("sideMenuCloseBtn"),
+      sideMenuOverlay: document.getElementById("sideMenuOverlay")
     };
 
     init();
 
+    function openSideMenu() {
+      document.body.classList.add("side-menu-open");
+      if (els.sideMenuOverlay) els.sideMenuOverlay.hidden = false;
+      if (els.menuToggleBtn) els.menuToggleBtn.setAttribute("aria-expanded", "true");
+    }
+
+    function closeSideMenu() {
+      document.body.classList.remove("side-menu-open");
+      if (els.sideMenuOverlay) els.sideMenuOverlay.hidden = true;
+      if (els.menuToggleBtn) els.menuToggleBtn.setAttribute("aria-expanded", "false");
+    }
+
+    function toggleSideMenu() {
+      if (document.body.classList.contains("side-menu-open")) {
+        closeSideMenu();
+      } else {
+        openSideMenu();
+      }
+    }
+
+    function closeSideMenuAfterAction(event) {
+      const target = event.target;
+      if (!target) return;
+
+      const interactive = target.closest("button, .file-label");
+      if (!interactive) return;
+
+      const keepOpenIds = new Set(["authBtn", "firebaseConfigBtn"]);
+      if (keepOpenIds.has(interactive.id)) return;
+
+      setTimeout(closeSideMenu, 120);
+    }
+
     function init() {
+      els.menuToggleBtn?.addEventListener("click", toggleSideMenu);
+      els.sideMenuCloseBtn?.addEventListener("click", closeSideMenu);
+      els.sideMenuOverlay?.addEventListener("click", closeSideMenu);
+      els.sideMenu?.addEventListener("click", closeSideMenuAfterAction);
+
       els.fileInput.addEventListener("change", event => {
         const file = event.target.files && event.target.files[0];
         if (file) readFile(file);
@@ -2874,12 +3417,33 @@
       });
 
       window.addEventListener("keydown", event => {
+        const target = event.target;
+        const isTyping = target && (
+          target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable
+        );
+
+        // Esc fecha primeiro o menu lateral, depois o modo apresentação.
+        if (event.key === "Escape" && document.body.classList.contains("side-menu-open")) {
+          event.preventDefault();
+          closeSideMenu();
+          return;
+        }
+
         if (event.key === "Escape" && document.body.classList.contains("presentation")) {
           event.preventDefault();
           exitPresentation();
+          return;
         }
 
-        if (event.key.toLowerCase() === "p") {
+        if (isTyping || !event.key) return;
+
+        const key = event.key.toLowerCase();
+
+        if (key === "p") {
+          event.preventDefault();
           const entering = !document.body.classList.contains("presentation");
           if (entering) {
             enterPresentation();
@@ -2887,18 +3451,34 @@
             exitPresentation();
           }
         }
-        if (event.key.toLowerCase() === "d") {
+
+        if (key === "d") {
+          event.preventDefault();
           setMode("day");
         }
-        if (event.key.toLowerCase() === "g") {
+
+        if (key === "g") {
+          event.preventDefault();
           setMode("general");
         }
-        if (event.key.toLowerCase() === "r") {
+
+        if (key === "r") {
+          event.preventDefault();
           setMode("group");
         }
       });
 
       window.addEventListener("resize", () => {
+        const active = document.activeElement;
+        const isTyping = active && (
+          active.tagName === "INPUT" ||
+          active.tagName === "TEXTAREA" ||
+          active.tagName === "SELECT" ||
+          active.isContentEditable
+        );
+
+        if (isTyping) return;
+
         if (document.body.classList.contains("presentation")) {
           renderAll();
         }
@@ -2968,15 +3548,12 @@
         rebuildRankingsFromPeriod();
 
         saveToStorage();
-        const savedToCloud = await saveToCloud(false);
+        saveToCloud(false);
         renderAll();
         const importedDates = Array.from(new Set(processed.rows.map(row => row.date))).sort();
         const firstDate = importedDates[0] ? formatDateBR(importedDates[0]) : "-";
         const lastDate = importedDates[importedDates.length - 1] ? formatDateBR(importedDates[importedDates.length - 1]) : "-";
-        const cloudMessage = savedToCloud
-          ? " Dados salvos no Firebase."
-          : " Dados atualizados localmente, mas não foram salvos no Firebase. Confira login, permissões e regras.";
-        showMessage(`Arquivo importado e mesclado ao histórico. ${processed.rows.length.toLocaleString("pt-BR")} registros lidos de ${firstDate} a ${lastDate}. Histórico atual: ${state.rows.length.toLocaleString("pt-BR")} registros.${cloudMessage}`, savedToCloud ? "info" : "error");
+        showMessage(`Arquivo importado e mesclado ao histórico. ${processed.rows.length.toLocaleString("pt-BR")} registros lidos de ${firstDate} a ${lastDate}. Histórico atual: ${state.rows.length.toLocaleString("pt-BR")} registros.`, "info");
       } catch (error) {
         console.error(error);
         showMessage(error.message || "Não foi possível importar o arquivo.", "error");
@@ -3699,6 +4276,13 @@
     }
 
     async function configureFirebaseFromPrompt() {
+      if (!isFirebaseConfigUserAllowed()) {
+        showMessage("A configuração do Firebase só pode ser aberta por usuário autorizado e logado.", "error");
+        openAuthModal();
+        updateFirebaseConfigButtonVisibility();
+        return;
+      }
+
       const currentConfig = localStorage.getItem(FIREBASE_SETTINGS_KEY) || JSON.stringify(DEFAULT_FIREBASE_CONFIG, null, 2);
       const message = [
         "Cole aqui o firebaseConfig do seu app Web.",
@@ -3729,6 +4313,30 @@
       return (user.email || "Usuário").split("@")[0];
     }
 
+    function isFirebaseConfigUserAllowed(user = state.currentUser) {
+      if (!user || !user.email) return false;
+
+      const email = String(user.email).trim().toLowerCase();
+
+      // Se a lista estiver vazia, qualquer usuário logado pode abrir a configuração.
+      // A proteção real de escrita continua nas regras do Firestore.
+      if (!FIREBASE_CONFIG_ALLOWED_EMAILS.length) return true;
+
+      return FIREBASE_CONFIG_ALLOWED_EMAILS.includes(email);
+    }
+
+    function updateFirebaseConfigButtonVisibility() {
+      if (!els.firebaseConfigBtn) return;
+
+      const canViewConfig = isFirebaseConfigUserAllowed();
+      els.firebaseConfigBtn.hidden = !canViewConfig;
+      els.firebaseConfigBtn.style.display = canViewConfig ? "inline-flex" : "none";
+      els.firebaseConfigBtn.disabled = !canViewConfig;
+      els.firebaseConfigBtn.title = canViewConfig
+        ? "Visualizar ou reconfigurar Firebase"
+        : "Disponível apenas para usuário autorizado e logado.";
+    }
+
     function updateAuthUi() {
       const isLogged = Boolean(state.currentUser);
 
@@ -3747,6 +4355,8 @@
           : "Faça login com usuário autorizado para importar dados.";
       }
       if (els.fileInput) els.fileInput.disabled = !isLogged;
+
+      updateFirebaseConfigButtonVisibility();
     }
 
     function openAuthModal() {
