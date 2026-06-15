@@ -1809,6 +1809,43 @@
       border: 1px solid rgba(255, 255, 255, .12);
     }
 
+
+
+    button.is-loading,
+    .file-label.is-loading {
+      opacity: .78;
+      cursor: wait;
+      transform: none !important;
+      pointer-events: none;
+    }
+
+    .data-status {
+      width: min(1500px, 100%);
+      margin: -6px auto 14px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(15, 41, 72, .10);
+      box-shadow: 0 10px 24px rgba(15, 41, 72, .10);
+      color: #0f2948;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      font-weight: 950;
+      text-align: center;
+    }
+
+    .data-status span {
+      white-space: nowrap;
+    }
+
+    .presentation .data-status {
+      display: none;
+    }
+
     .presentation .theme-select,
     .presentation .firebase-status {
       display: none;
@@ -2337,6 +2374,92 @@
       }
     }
 
+
+    .auth-modal[hidden] {
+      display: none !important;
+    }
+
+    .auth-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(3, 13, 25, .52);
+      backdrop-filter: blur(8px);
+    }
+
+    .auth-card {
+      width: min(430px, 100%);
+      border-radius: 24px;
+      padding: 24px;
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(238,248,255,.96));
+      border: 1px solid rgba(255,255,255,.72);
+      box-shadow: 0 26px 70px rgba(2, 8, 23, .34);
+      color: #061222;
+    }
+
+    .auth-card h2 {
+      margin: 0 0 8px;
+      font-size: 24px;
+      letter-spacing: -.04em;
+    }
+
+    .auth-card p {
+      margin: 0 0 18px;
+      color: #40566f;
+      font-weight: 750;
+      line-height: 1.35;
+    }
+
+    .auth-card label {
+      display: grid;
+      gap: 7px;
+      margin-top: 12px;
+      color: #23364d;
+      font-size: 12px;
+      font-weight: 1000;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .auth-card input {
+      width: 100%;
+      height: 46px;
+      border: 1px solid #c9d7e6;
+      border-radius: 14px;
+      padding: 0 13px;
+      font: inherit;
+      font-weight: 800;
+      color: #061222;
+      background: #ffffff;
+      outline: none;
+    }
+
+    .auth-card input:focus {
+      border-color: #2f80ed;
+      box-shadow: 0 0 0 4px rgba(47,128,237,.14);
+    }
+
+    .auth-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .auth-actions button {
+      box-shadow: 0 10px 22px rgba(15, 41, 72, .16);
+    }
+
+    .file-label.is-disabled {
+      cursor: not-allowed;
+      opacity: .62;
+      transform: none !important;
+      box-shadow: 0 8px 18px rgba(0,0,0,.10);
+    }
+
     @media (prefers-reduced-motion: reduce) {
 
       *,
@@ -2354,7 +2477,7 @@
     <header class="topbar">
       <div>
         <!--<div class="eyebrow">🏆 TV Ranking • Estilo transmissão</div>-->
-        <h1 class="main-title">
+        <h1>
           <img src="soften-logo.png" alt="Soften Sistemas" class="title-logo">
           <span>Performance Suporte Técnico</span>
         </h1>
@@ -2382,13 +2505,21 @@
         </select>
         <button class="btn-ghost" id="carouselBtn" type="button">🎠 Carrossel ON</button>
         <button class="btn-dark" id="firebaseConfigBtn" type="button">☁️ Firebase</button>
+        <button class="btn-dark" id="authBtn" type="button">🔐 Entrar</button>
         <button class="btn-dark" id="syncCloudBtn" type="button">↕️ Sync</button>
+        <button class="btn-dark" id="refreshCloudBtn" type="button">☁️ Atualizar da nuvem</button>
         <span class="firebase-status" id="firebaseStatus">☁️ Local</span>
         <button class="btn-yellow" id="presentationBtn" type="button">🖥️ Modo apresentação</button>
         <button class="btn-ghost" id="layoutBtn" type="button">2 colunas</button>
         <button class="btn-danger" id="clearBtn" type="button">🗑️ Limpar</button>
       </div>
     </header>
+
+    <div class="data-status" id="dataStatus">
+      <span>Fonte: <strong id="dataSourceText">Local</strong></span>
+      <span>Última sincronização: <strong id="lastSyncText">-</strong></span>
+      <span>Registros históricos: <strong id="recordsCountText">0</strong></span>
+    </div>
 
     <section class="scorecards">
       <article class="scorecard">
@@ -2492,9 +2623,29 @@
     </section>
   </div>
 
+  <div class="auth-modal" id="authModal" hidden>
+    <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <h2 id="authTitle">Acesso autorizado</h2>
+      <p>Entre com um usuário autorizado para importar, sincronizar ou limpar dados do painel.</p>
+      <label>
+        E-mail
+        <input id="authEmail" type="email" autocomplete="username" placeholder="usuario@empresa.com.br">
+      </label>
+      <label>
+        Senha
+        <input id="authPassword" type="password" autocomplete="current-password" placeholder="Sua senha">
+      </label>
+      <div class="auth-actions">
+        <button class="btn-ghost" id="authCancelBtn" type="button">Cancelar</button>
+        <button class="btn-yellow" id="authLoginBtn" type="button">Entrar</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script>
     const STORAGE_KEY = "brasileirao-atendimento-ranking-v2";
     const SETTINGS_KEY = "brasileirao-atendimento-settings-v1";
@@ -2503,9 +2654,17 @@
     const FIREBASE_COLLECTION = "paineis";
     const FIREBASE_DOCUMENT = "brasileirao-atendimento";
 
-    // Senha simples para liberar importação de nova planilha.
-    // Altere aqui se quiser trocar a senha.
-    const IMPORT_PASSWORD = "1234";
+    // Configuração padrão do Firebase.
+    // A config web pode ficar no front-end; a segurança de leitura/escrita fica nas regras do Firestore + Firebase Auth.
+    const DEFAULT_FIREBASE_CONFIG = {
+      apiKey: "AIzaSyBPHK37CLiS9yZ1s6SEqtF8tValyMaDuGE",
+      authDomain: "ranking-atendimento.firebaseapp.com",
+      projectId: "ranking-atendimento",
+      storageBucket: "ranking-atendimento.firebasestorage.app",
+      messagingSenderId: "818776904500",
+      appId: "1:818776904500:web:440ac8a0a77bfea1d44b61"
+    };
+
     const EXCLUDED_TECHNICIANS = [
       "Jose Eduardo Pagnossim",
       "Heitor Drago Gois",
@@ -2533,11 +2692,18 @@
       twoColumns: true,
       autoSwitch: true,
       carouselEnabled: true,
+      isSyncing: false,
+      isRefreshingFromCloud: false,
+      dataSource: "Local",
+      lastSyncAt: "",
       carouselModes: ["day", "notesDay", "general", "notesGeneral", "group", "notesGroup"],
       theme: "claro",
       firebaseReady: false,
       firebaseConfig: null,
       db: null,
+      auth: null,
+      currentUser: null,
+      authReady: false,
       periodMode: "currentMonth",
       startDate: "",
       endDate: ""
@@ -2570,8 +2736,19 @@
       themeSelect: document.getElementById("themeSelect"),
       carouselBtn: document.getElementById("carouselBtn"),
       firebaseConfigBtn: document.getElementById("firebaseConfigBtn"),
+      authBtn: document.getElementById("authBtn"),
+      authModal: document.getElementById("authModal"),
+      authEmail: document.getElementById("authEmail"),
+      authPassword: document.getElementById("authPassword"),
+      authLoginBtn: document.getElementById("authLoginBtn"),
+      authCancelBtn: document.getElementById("authCancelBtn"),
       syncCloudBtn: document.getElementById("syncCloudBtn"),
+      refreshCloudBtn: document.getElementById("refreshCloudBtn"),
       firebaseStatus: document.getElementById("firebaseStatus"),
+      dataStatus: document.getElementById("dataStatus"),
+      dataSourceText: document.getElementById("dataSourceText"),
+      lastSyncText: document.getElementById("lastSyncText"),
+      recordsCountText: document.getElementById("recordsCountText"),
       currentMonthBtn: document.getElementById("currentMonthBtn"),
       previousMonthBtn: document.getElementById("previousMonthBtn"),
       allPeriodBtn: document.getElementById("allPeriodBtn"),
@@ -2641,7 +2818,17 @@
       });
 
       els.firebaseConfigBtn.addEventListener("click", configureFirebaseFromPrompt);
+      els.authBtn.addEventListener("click", handleAuthButtonClick);
+      els.authLoginBtn.addEventListener("click", signInFromModal);
+      els.authCancelBtn.addEventListener("click", closeAuthModal);
+      els.authModal.addEventListener("click", event => {
+        if (event.target === els.authModal) closeAuthModal();
+      });
+      els.authPassword.addEventListener("keydown", event => {
+        if (event.key === "Enter") signInFromModal();
+      });
       els.syncCloudBtn.addEventListener("click", syncWithCloud);
+      els.refreshCloudBtn.addEventListener("click", refreshFromCloud);
 
       els.reloadSavedBtn.addEventListener("click", () => {
         const ok = loadFromStorage();
@@ -2745,19 +2932,8 @@
       }
     }
 
-    function confirmImportPassword() {
-      const password = prompt("Digite a senha para importar uma nova planilha:");
-
-      if (password !== IMPORT_PASSWORD) {
-        showMessage("Senha incorreta. A importação foi cancelada.", "error");
-        return false;
-      }
-
-      return true;
-    }
-
     async function readFile(file) {
-      if (!confirmImportPassword()) return;
+      if (!requireWriteAccess("importar uma nova planilha")) return;
 
       try {
         const extension = file.name.split(".").pop().toLowerCase();
@@ -2792,12 +2968,15 @@
         rebuildRankingsFromPeriod();
 
         saveToStorage();
-        saveToCloud(false);
+        const savedToCloud = await saveToCloud(false);
         renderAll();
         const importedDates = Array.from(new Set(processed.rows.map(row => row.date))).sort();
         const firstDate = importedDates[0] ? formatDateBR(importedDates[0]) : "-";
         const lastDate = importedDates[importedDates.length - 1] ? formatDateBR(importedDates[importedDates.length - 1]) : "-";
-        showMessage(`Arquivo importado e mesclado ao histórico. ${processed.rows.length.toLocaleString("pt-BR")} registros lidos de ${firstDate} a ${lastDate}. Histórico atual: ${state.rows.length.toLocaleString("pt-BR")} registros.`, "info");
+        const cloudMessage = savedToCloud
+          ? " Dados salvos no Firebase."
+          : " Dados atualizados localmente, mas não foram salvos no Firebase. Confira login, permissões e regras.";
+        showMessage(`Arquivo importado e mesclado ao histórico. ${processed.rows.length.toLocaleString("pt-BR")} registros lidos de ${firstDate} a ${lastDate}. Histórico atual: ${state.rows.length.toLocaleString("pt-BR")} registros.${cloudMessage}`, savedToCloud ? "info" : "error");
       } catch (error) {
         console.error(error);
         showMessage(error.message || "Não foi possível importar o arquivo.", "error");
@@ -3409,17 +3588,71 @@
       els.firebaseStatus.style.background = connected ? "rgba(34,197,94,.20)" : "rgba(255,255,255,.10)";
     }
 
+    function updateDataStatus(source = state.dataSource, syncAt = state.lastSyncAt) {
+      state.dataSource = source || (state.firebaseReady ? "Firebase" : "Local");
+      if (syncAt) state.lastSyncAt = syncAt;
+
+      if (els.dataSourceText) els.dataSourceText.textContent = state.dataSource;
+      if (els.lastSyncText) els.lastSyncText.textContent = state.lastSyncAt ? formatDateTimeBR(state.lastSyncAt) : "-";
+      if (els.recordsCountText) els.recordsCountText.textContent = formatNumber(state.rows?.length || 0);
+    }
+
+    function formatDateTimeBR(value) {
+      const date = value instanceof Date ? value : new Date(value);
+      if (Number.isNaN(date.getTime())) return "-";
+      return date.toLocaleString("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function setButtonLoading(button, isLoading, loadingText, defaultText) {
+      if (!button) return;
+
+      if (isLoading) {
+        button.dataset.originalText = button.dataset.originalText || button.textContent || defaultText;
+        button.textContent = loadingText;
+        button.disabled = true;
+        button.classList.add("is-loading");
+      } else {
+        button.textContent = button.dataset.originalText || defaultText;
+        button.disabled = false;
+        button.classList.remove("is-loading");
+        delete button.dataset.originalText;
+      }
+    }
+
+    function setSyncButtonLoading(isLoading) {
+      setButtonLoading(els.syncCloudBtn, isLoading, "⏳ Sincronizando...", "↕️ Sync");
+    }
+
+    function setRefreshCloudButtonLoading(isLoading) {
+      setButtonLoading(els.refreshCloudBtn, isLoading, "⏳ Atualizando...", "☁️ Atualizar da nuvem");
+    }
+
     function initFirebaseFromStorage() {
       try {
         const saved = JSON.parse(localStorage.getItem(FIREBASE_SETTINGS_KEY) || "null");
-        if (!saved || !saved.apiKey || !saved.projectId) {
+        const config = saved && saved.apiKey && saved.projectId
+          ? saved
+          : DEFAULT_FIREBASE_CONFIG;
+
+        if (!config || !config.apiKey || !config.projectId) {
           updateFirebaseStatus("Local", false);
           return false;
         }
 
-        return initFirebase(saved);
+        return initFirebase(config);
       } catch (error) {
-        console.warn("Configuração Firebase inválida.", error);
+        console.warn("Configuração Firebase inválida. Tentando configuração padrão.", error);
+
+        if (DEFAULT_FIREBASE_CONFIG?.apiKey && DEFAULT_FIREBASE_CONFIG?.projectId) {
+          return initFirebase(DEFAULT_FIREBASE_CONFIG);
+        }
+
         updateFirebaseStatus("Local", false);
         return false;
       }
@@ -3439,6 +3672,20 @@
         state.db = firebase.firestore();
         state.firebaseConfig = config;
         state.firebaseReady = true;
+
+        if (firebase.auth) {
+          state.auth = firebase.auth();
+          state.authReady = true;
+          state.auth.onAuthStateChanged(user => {
+            state.currentUser = user || null;
+            updateAuthUi();
+          });
+        } else {
+          state.auth = null;
+          state.authReady = false;
+          updateAuthUi();
+        }
+
         localStorage.setItem(FIREBASE_SETTINGS_KEY, JSON.stringify(config));
         updateFirebaseStatus("Conectado", true);
         return true;
@@ -3452,7 +3699,7 @@
     }
 
     async function configureFirebaseFromPrompt() {
-      const currentConfig = localStorage.getItem(FIREBASE_SETTINGS_KEY) || "";
+      const currentConfig = localStorage.getItem(FIREBASE_SETTINGS_KEY) || JSON.stringify(DEFAULT_FIREBASE_CONFIG, null, 2);
       const message = [
         "Cole aqui o firebaseConfig do seu app Web.",
         "Exemplo:",
@@ -3474,6 +3721,119 @@
         console.error(error);
         showMessage("Configuração inválida. Cole o firebaseConfig em formato JSON.", "error");
       }
+    }
+
+
+    function getAuthDisplayName(user = state.currentUser) {
+      if (!user) return "";
+      return (user.email || "Usuário").split("@")[0];
+    }
+
+    function updateAuthUi() {
+      const isLogged = Boolean(state.currentUser);
+
+      if (els.authBtn) {
+        els.authBtn.textContent = isLogged ? `🔓 ${getAuthDisplayName()}` : "🔐 Entrar";
+        els.authBtn.title = isLogged
+          ? `Logado como ${state.currentUser.email}. Clique para sair.`
+          : "Entrar com usuário autorizado para importar, sincronizar e limpar dados.";
+      }
+
+      const fileLabel = els.fileInput?.closest(".file-label");
+      if (fileLabel) {
+        fileLabel.classList.toggle("is-disabled", !isLogged);
+        fileLabel.title = isLogged
+          ? "Importar CSV/Excel"
+          : "Faça login com usuário autorizado para importar dados.";
+      }
+      if (els.fileInput) els.fileInput.disabled = !isLogged;
+    }
+
+    function openAuthModal() {
+      if (!state.authReady || !state.auth) {
+        showMessage("Firebase Auth ainda não está disponível. Verifique a configuração do Firebase.", "error");
+        return;
+      }
+
+      els.authModal.hidden = false;
+      els.authPassword.value = "";
+      setTimeout(() => els.authEmail.focus(), 50);
+    }
+
+    function closeAuthModal() {
+      els.authModal.hidden = true;
+      els.authPassword.value = "";
+    }
+
+    async function handleAuthButtonClick() {
+      if (state.currentUser && state.auth) {
+        const ok = confirm(`Deseja sair do usuário ${state.currentUser.email}?`);
+        if (!ok) return;
+
+        try {
+          await state.auth.signOut();
+          showMessage("Usuário desconectado. A visualização continua disponível, mas alterações exigem login.", "info");
+        } catch (error) {
+          console.error(error);
+          showMessage("Não foi possível sair da conta.", "error");
+        }
+        return;
+      }
+
+      openAuthModal();
+    }
+
+    function getAuthErrorMessage(error) {
+      const code = error?.code || "";
+      if (code.includes("invalid-credential") || code.includes("wrong-password") || code.includes("user-not-found")) {
+        return "E-mail ou senha inválidos.";
+      }
+      if (code.includes("too-many-requests")) {
+        return "Muitas tentativas. Aguarde alguns minutos e tente novamente.";
+      }
+      if (code.includes("network-request-failed")) {
+        return "Falha de conexão ao autenticar.";
+      }
+      return "Não foi possível entrar. Verifique o usuário autorizado e tente novamente.";
+    }
+
+    async function signInFromModal() {
+      const email = String(els.authEmail.value || "").trim();
+      const password = String(els.authPassword.value || "");
+
+      if (!email || !password) {
+        showMessage("Informe e-mail e senha para entrar.", "error");
+        return;
+      }
+
+      if (!state.auth) {
+        showMessage("Firebase Auth não está disponível.", "error");
+        return;
+      }
+
+      const originalText = els.authLoginBtn.textContent;
+      els.authLoginBtn.disabled = true;
+      els.authLoginBtn.textContent = "Entrando...";
+
+      try {
+        await state.auth.signInWithEmailAndPassword(email, password);
+        closeAuthModal();
+        showMessage("Login realizado com sucesso. Alterações no painel estão liberadas para este usuário.", "info");
+      } catch (error) {
+        console.error(error);
+        showMessage(getAuthErrorMessage(error), "error");
+      } finally {
+        els.authLoginBtn.disabled = false;
+        els.authLoginBtn.textContent = originalText || "Entrar";
+      }
+    }
+
+    function requireWriteAccess(actionLabel = "alterar dados") {
+      if (state.currentUser) return true;
+
+      showMessage(`Faça login com um usuário autorizado para ${actionLabel}.`, "error");
+      openAuthModal();
+      return false;
     }
 
     function buildCloudPayload() {
@@ -3559,6 +3919,10 @@
 
     async function saveToCloud(showSuccess = true) {
       if (!state.firebaseReady || !state.db || !state.rows.length) return false;
+      if (!state.currentUser) {
+        if (showSuccess) showMessage("Faça login com um usuário autorizado para salvar dados no Firebase.", "error");
+        return false;
+      }
 
       try {
         const panelRef = getPanelRef();
@@ -3673,6 +4037,7 @@
         renderAll();
 
         updateFirebaseStatus("Carregado", true);
+        updateDataStatus("Firebase", new Date().toISOString());
         if (showSuccess) showMessage(`Histórico carregado do Firebase com sucesso. ${state.rows.length.toLocaleString("pt-BR")} registros.`, "info");
         return true;
       } catch (error) {
@@ -3685,6 +4050,7 @@
 
     async function clearCloudHistory() {
       if (!state.firebaseReady || !state.db) return false;
+      if (!requireWriteAccess("limpar o histórico do Firebase")) return false;
 
       try {
         const panelRef = getPanelRef();
@@ -3738,21 +4104,63 @@
       return Number.isFinite(time) ? time : 0;
     }
 
-    async function syncWithCloud() {
-      if (!state.firebaseReady) {
-        const ok = initFirebaseFromStorage();
-        if (!ok) {
-          configureFirebaseFromPrompt();
-          return;
-        }
-      }
-
-      if (!state.firebaseReady || !state.db) {
-        showMessage("Firebase não está configurado para sincronização.", "error");
-        return;
-      }
+    async function refreshFromCloud() {
+      if (state.isRefreshingFromCloud) return;
+      state.isRefreshingFromCloud = true;
+      setRefreshCloudButtonLoading(true);
 
       try {
+        if (!state.firebaseReady) {
+          const ok = initFirebaseFromStorage();
+          if (!ok) {
+            configureFirebaseFromPrompt();
+            return;
+          }
+        }
+
+        if (!state.firebaseReady || !state.db) {
+          showMessage("Firebase não está configurado para atualização da nuvem.", "error");
+          return;
+        }
+
+        updateFirebaseStatus("Atualizando", true);
+        const loaded = await loadFromCloud(true);
+
+        if (loaded) {
+          updateFirebaseStatus("Atualizado", true);
+          updateDataStatus("Firebase", new Date().toISOString());
+        }
+      } catch (error) {
+        console.error(error);
+        updateFirebaseStatus("Erro ao atualizar", false);
+        showMessage("Não foi possível atualizar os dados da nuvem. Verifique conexão e Console do navegador.", "error");
+      } finally {
+        state.isRefreshingFromCloud = false;
+        setRefreshCloudButtonLoading(false);
+        updateDataStatus();
+      }
+    }
+
+    async function syncWithCloud() {
+      if (!requireWriteAccess("sincronizar dados com a nuvem")) return;
+      if (state.isSyncing) return;
+      state.isSyncing = true;
+      setSyncButtonLoading(true);
+
+      try {
+        if (!state.firebaseReady) {
+          const ok = initFirebaseFromStorage();
+          if (!ok) {
+            configureFirebaseFromPrompt();
+            return;
+          }
+        }
+
+        if (!state.firebaseReady || !state.db) {
+          showMessage("Firebase não está configurado para sincronização.", "error");
+          return;
+        }
+
         updateFirebaseStatus("Sincronizando", true);
 
         const panelRef = getPanelRef();
@@ -3769,17 +4177,22 @@
 
         let mergedRows = [];
         let sourceMessage = "";
+        let shouldSaveMergedToCloud = false;
 
         if (!localRows.length && cloudRows.length) {
           mergedRows = cloudRows;
           sourceMessage = "Dados carregados do Firebase.";
+          shouldSaveMergedToCloud = false;
         } else if (localRows.length && !cloudRows.length) {
           mergedRows = localRows;
           sourceMessage = "Dados locais enviados para o Firebase.";
+          shouldSaveMergedToCloud = true;
         } else {
           const cloudTime = parseSyncTimestamp(meta.updatedAt || meta.importedAt);
           const localTime = parseSyncTimestamp(state.importedAt);
           const localIsNewer = localTime && (!cloudTime || localTime > cloudTime);
+          const cloudKeys = new Set(cloudRows.map(historicalRowKey));
+          const hasLocalRowsNotInCloud = localRows.some(row => !cloudKeys.has(historicalRowKey(row)));
 
           // A segunda lista prevalece quando existe o mesmo data+técnico+grupo.
           // Se o local acabou de receber uma importação, ele prevalece nos conflitos.
@@ -3788,9 +4201,13 @@
             ? mergeHistoricalRows(cloudRows, localRows)
             : mergeHistoricalRows(localRows, cloudRows);
 
+          shouldSaveMergedToCloud = Boolean(localIsNewer || hasLocalRowsNotInCloud);
+
           sourceMessage = localIsNewer
             ? "Histórico mesclado: importação local mais recente enviada para o Firebase."
-            : "Histórico mesclado: dados mais recentes do Firebase carregados nesta página.";
+            : hasLocalRowsNotInCloud
+              ? "Histórico mesclado: registros locais que ainda não estavam na nuvem foram enviados."
+              : "Histórico atualizado com os dados mais recentes do Firebase.";
         }
 
         const processed = processRows(rowsToRawRows(mergedRows));
@@ -3813,19 +4230,26 @@
         saveSettings();
         renderAll();
 
-        const saved = await saveToCloud(false);
-        if (!saved) {
-          updateFirebaseStatus("Erro ao salvar", false);
-          showMessage("Consegui mesclar os dados na tela, mas não consegui salvar o resultado no Firebase. Veja o Console do navegador.", "error");
-          return;
+        if (shouldSaveMergedToCloud) {
+          const saved = await saveToCloud(false);
+          if (!saved) {
+            updateFirebaseStatus("Erro ao salvar", false);
+            showMessage("Consegui mesclar os dados na tela, mas não consegui salvar o resultado no Firebase. Veja o Console do navegador.", "error");
+            return;
+          }
         }
 
         updateFirebaseStatus("Sincronizado", true);
+        updateDataStatus("Firebase", new Date().toISOString());
         showMessage(`${sourceMessage} Total atual: ${state.rows.length.toLocaleString("pt-BR")} registros históricos.`, "info");
       } catch (error) {
         console.error(error);
         updateFirebaseStatus("Erro ao sincronizar", false);
         showMessage("Não foi possível sincronizar com o Firebase. Verifique conexão, regras e Console do navegador.", "error");
+      } finally {
+        state.isSyncing = false;
+        setSyncButtonLoading(false);
+        updateDataStatus();
       }
     }
 
@@ -3924,6 +4348,7 @@
       els.autoNote.textContent = document.body.classList.contains("presentation")
         ? `Esc para sair • Carrossel ${state.carouselEnabled ? "ON" : "OFF"}`
         : `Carrossel ${state.carouselEnabled ? "ON" : "OFF"} • ${state.twoColumns ? "2 colunas" : "1 coluna"}`;
+      updateDataStatus();
     }
 
     function updateCards() {
@@ -4232,6 +4657,7 @@
         }
 
         renderAll();
+        updateDataStatus("Local", payload.importedAt || "");
         return true;
       } catch (error) {
         console.error(error);
