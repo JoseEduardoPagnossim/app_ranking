@@ -241,6 +241,10 @@ service cloud.firestore {
   match /databases/{database}/documents {
     match /paineis/brasileirao-atendimento {
       allow read, write: if true;
+
+      match /registros/{registroId} {
+        allow read, write: if true;
+      }
     }
 
     match /{document=**} {
