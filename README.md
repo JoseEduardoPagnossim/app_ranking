@@ -19,6 +19,9 @@ Painel web em estilo transmissão/TV para acompanhar atendimentos finalizados e 
 - Ranking de notas do dia.
 - Ranking geral de notas.
 - Ranking por grupo.
+- Ranking de notas por grupo, com percentual de participação no total de avaliações do período.
+- Ranking de notas por grupo/squad.
+- Ranking de notas por grupo/squad.
 - Cards superiores com:
   - última data do filtro;
   - dias considerados no período;
@@ -101,6 +104,8 @@ A classificação do dia considera a última data encontrada dentro do período 
 
 O ranking por grupo soma a coluna `Quantidade` por `grupoAtendimento` dentro do período filtrado.
 
+O ranking de notas por grupo/squad soma as avaliações (`Nota 5` até `Nota 1`) por `grupoAtendimento` dentro do período filtrado.
+
 ## Regras de cálculo de notas
 
 O total de avaliações é calculado pela soma das colunas:
@@ -117,12 +122,20 @@ A média de avaliações é calculada por média ponderada:
 
 A média geral exibida no card superior respeita o período filtrado.
 
-A média de nota por técnico também respeita o período filtrado e aparece apenas nas abas:
+A média de nota por técnico também respeita o período filtrado e aparece nas abas de notas por técnico. A aba de notas por grupo/squad também exibe a média ponderada do grupo.
 
 - Notas do dia;
 - Notas geral.
 
 Nas abas de atendimento, a coluna de média de nota não é exibida.
+
+No ranking **Notas por grupo**, o painel também calcula a participação de cada grupo no total de avaliações do período:
+
+```text
+(total de avaliações do grupo ÷ total de avaliações do período) × 100
+```
+
+Esse percentual aparece na coluna **% do total**.
 
 ## Histórico cumulativo com Firebase
 

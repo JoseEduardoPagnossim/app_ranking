@@ -2038,6 +2038,7 @@
         <button class="tab active" id="generalTab" type="button">Qtd. Finalizados Geral</button>
         <button class="tab" id="notesGeneralTab" type="button">Qtd. Notas Geral</button>
         <button class="tab" id="groupTab" type="button">Finalizados por grupo</button>
+        <button class="tab" id="notesGroupTab" type="button">Notas por grupo</button>
       </div>
       <div class="auto-note" id="autoNote">Alternância automática: 30s • 2 colunas</div>
     </nav>
@@ -2109,13 +2110,14 @@
       groupRanking: [],
       noteDay: [],
       noteOverall: [],
+      noteGroupRanking: [],
       qualitySummary: null,
       praiseComments: [],
       activeMode: "day",
       twoColumns: true,
       autoSwitch: true,
       carouselEnabled: true,
-      carouselModes: ["day", "notesDay", "general", "notesGeneral", "group"],
+      carouselModes: ["day", "notesDay", "general", "notesGeneral", "group", "notesGroup"],
       theme: "classico",
       firebaseReady: false,
       firebaseConfig: null,
@@ -2141,6 +2143,7 @@
       generalTab: document.getElementById("generalTab"),
       notesGeneralTab: document.getElementById("notesGeneralTab"),
       groupTab: document.getElementById("groupTab"),
+      notesGroupTab: document.getElementById("notesGroupTab"),
       rankingTitle: document.getElementById("rankingTitle"),
       rankingSubtitle: document.getElementById("rankingSubtitle"),
       rankingColumns: document.getElementById("rankingColumns"),
@@ -2208,6 +2211,7 @@
       els.generalTab.addEventListener("click", () => setMode("general"));
       els.notesGeneralTab.addEventListener("click", () => setMode("notesGeneral"));
       els.groupTab.addEventListener("click", () => setMode("group"));
+      els.notesGroupTab.addEventListener("click", () => setMode("notesGroup"));
 
       els.themeSelect.addEventListener("change", () => {
         setTheme(els.themeSelect.value);
@@ -2905,6 +2909,55 @@
         }));
     }
 
+    function buildGroupNoteRanking(rows) {
+      const map = new Map();
+      let periodTotalRatings = 0;
+
+      rows.forEach(row => {
+        const rowTotalRatings = row.totalRatings || 0;
+        periodTotalRatings += rowTotalRatings;
+
+        const key = normalizeName(row.group);
+        const current = map.get(key) || {
+          technician: row.group,
+          group: row.group,
+          totalRatings: 0,
+          ratingSum: 0,
+          roundsSet: new Set()
+        };
+
+        current.totalRatings += rowTotalRatings;
+        current.ratingSum += row.ratingSum || 0;
+        if (rowTotalRatings > 0) current.roundsSet.add(row.date);
+        map.set(key, current);
+      });
+
+      return Array.from(map.values())
+        .filter(item => item.totalRatings > 0)
+        .map(item => ({
+          technician: item.technician,
+          group: item.group,
+          totalRatings: item.totalRatings,
+          ratingSum: item.ratingSum,
+          totalQuantity: item.totalRatings,
+          averageRating: item.totalRatings ? item.ratingSum / item.totalRatings : 0,
+          percentageOfRatings: periodTotalRatings ? (item.totalRatings / periodTotalRatings) * 100 : 0,
+          roundsParticipated: item.roundsSet.size,
+          averagePerRound: item.roundsSet.size ? item.totalRatings / item.roundsSet.size : 0
+        }))
+        .sort((a, b) =>
+          b.totalRatings - a.totalRatings ||
+          b.averageRating - a.averageRating ||
+          a.technician.localeCompare(b.technician, "pt-BR")
+        )
+        .map((item, index) => ({
+          ...item,
+          position: index + 1,
+          movement: { label: "grupo", value: 0, icon: "◆", className: "same" }
+        }));
+    }
+
+
     function setTheme(theme) {
       const validThemes = ["classico", "soften", "neon", "claro"];
       state.theme = validThemes.includes(theme) ? theme : "classico";
@@ -3417,6 +3470,7 @@
       state.noteDay = buildNoteRanking(filteredRows, rounds[rounds.length - 1] || "", previousDate);
       state.qualitySummary = buildQualitySummary(filteredRows);
       state.groupRanking = buildGroupRanking(filteredRows);
+      state.noteGroupRanking = buildGroupNoteRanking(filteredRows);
     }
 
     function getRowsInSelectedPeriod() {
@@ -3475,7 +3529,8 @@
       els.generalTab.classList.toggle("active", state.activeMode === "general");
       els.notesGeneralTab.classList.toggle("active", state.activeMode === "notesGeneral");
       els.groupTab.classList.toggle("active", state.activeMode === "group");
-      document.body.classList.toggle("group-mode", state.activeMode === "group");
+      els.notesGroupTab.classList.toggle("active", state.activeMode === "notesGroup");
+      document.body.classList.toggle("group-mode", state.activeMode === "group" || state.activeMode === "notesGroup");
       els.carouselBtn.textContent = state.carouselEnabled ? "🎠 Carrossel ON" : "🎠 Carrossel OFF";
 
       if (state.activeMode === "day") {
@@ -3488,8 +3543,11 @@
         els.rankingTitle.textContent = "Total Notas";
         els.rankingSubtitle.textContent = "Soma a quantidade de avaliações por técnico dentro do período filtrado.";
       } else if (state.activeMode === "group") {
-        els.rankingTitle.textContent = "Ranking por grupo";
+        els.rankingTitle.textContent = "Ranking finalizados por grupo";
         els.rankingSubtitle.textContent = "Soma os atendimentos por grupo dentro do período filtrado.";
+      } else if (state.activeMode === "notesGroup") {
+        els.rankingTitle.textContent = "Ranking de notas por grupo";
+        els.rankingSubtitle.textContent = "Soma a quantidade de avaliações por squad/grupo dentro do período filtrado.";
       } else {
         els.rankingTitle.textContent = "Total Finalizados";
         els.rankingSubtitle.textContent = "Soma as rodadas do período filtrado.";
@@ -3512,7 +3570,9 @@
             ? state.noteOverall
             : state.activeMode === "group"
               ? state.groupRanking
-              : state.overall;
+              : state.activeMode === "notesGroup"
+                ? state.noteGroupRanking
+                : state.overall;
       const search = normalizeName(els.searchInput.value);
       const group = els.groupFilter.value;
 
@@ -3524,13 +3584,13 @@
     }
 
     function renderSpotlights() {
-      if (state.activeMode === "group") {
+      if (state.activeMode === "group" || state.activeMode === "notesGroup") {
         els.g6Box.innerHTML = "";
         els.z4Box.innerHTML = "";
         return;
       }
 
-      const rows = state.activeMode === "day" ? state.lastDay : state.activeMode === "notesDay" ? state.noteDay : state.activeMode === "notesGeneral" ? state.noteOverall : state.overall;
+      const rows = state.activeMode === "day" ? state.lastDay : state.activeMode === "notesDay" ? state.noteDay : state.activeMode === "notesGeneral" ? state.noteOverall : state.activeMode === "notesGroup" ? state.noteGroupRanking : state.overall;
       const g6 = rows.slice(0, 6);
       const z4 = rows.slice(-4);
 
@@ -3565,7 +3625,7 @@
       if (isPresentation) {
         applyTvRowDensity(rows.length);
 
-        if (state.activeMode === "group") {
+        if (state.activeMode === "group" || state.activeMode === "notesGroup") {
           els.rankingColumns.style.gridTemplateColumns = "1fr";
           els.leftTable.innerHTML = buildTable(rows);
           els.rightTable.innerHTML = "";
@@ -3633,10 +3693,13 @@
             ? state.noteOverall.length
             : state.activeMode === "group"
               ? state.groupRanking.length
-              : state.overall.length;
-      const mainLabel = state.activeMode === "group" ? "Grupo" : "Técnico";
-      const squadLabel = state.activeMode === "group" ? "Tipo" : "Squad";
-      const isNotesMode = state.activeMode === "notesDay" || state.activeMode === "notesGeneral";
+              : state.activeMode === "notesGroup"
+                ? state.noteGroupRanking.length
+                : state.overall.length;
+      const isGroupMode = state.activeMode === "group" || state.activeMode === "notesGroup";
+      const mainLabel = isGroupMode ? "Grupo" : "Técnico";
+      const squadLabel = isGroupMode ? "Tipo" : "Squad";
+      const isNotesMode = state.activeMode === "notesDay" || state.activeMode === "notesGeneral" || state.activeMode === "notesGroup";
 
       return `
         <table>
@@ -3647,6 +3710,7 @@
               <th class="squad">${squadLabel}</th>
               <th class="num" style="width:78px">${isNotesMode ? "Aval." : "Total"}</th>
               ${isNotesMode ? '<th class="num" style="width:78px">Média</th>' : ''}
+              ${state.activeMode === "notesGroup" ? '<th class="num" style="width:92px">% do total</th>' : ''}
               <th class="move">Mov.</th>
               <th class="status">Status</th>
             </tr>
@@ -3667,9 +3731,10 @@
         <tr class="${status.rowClass}" style="animation-delay:${index * 18}ms">
           <td class="pos-cell">${item.position}º ${medal}</td>
           <td class="tech" title="${escapeHtml(item.technician)}">${escapeHtml(item.technician)}</td>
-          <td class="squad"><span class="squad-badge">${escapeHtml(state.activeMode === "group" ? "GRP" : shortGroup(item.group))}</span></td>
+          <td class="squad"><span class="squad-badge">${escapeHtml((state.activeMode === "group" || state.activeMode === "notesGroup") ? "GRP" : shortGroup(item.group))}</span></td>
           <td class="num">${formatNumber(item.totalQuantity)}</td>
-          ${(state.activeMode === "notesDay" || state.activeMode === "notesGeneral") ? `<td class="num">${formatDecimal(item.averageRating)}</td>` : ""}
+          ${(state.activeMode === "notesDay" || state.activeMode === "notesGeneral" || state.activeMode === "notesGroup") ? `<td class="num">${formatDecimal(item.averageRating)}</td>` : ""}
+          ${state.activeMode === "notesGroup" ? `<td class="num">${formatPercent(item.percentageOfRatings)}</td>` : ""}
           <td class="move"><span class="move-badge">${movement.icon} ${movement.label}</span></td>
           <td class="status"><span class="status-badge ${status.badgeClass}">${status.label}</span></td>
         </tr>
@@ -3677,7 +3742,7 @@
     }
 
     function getStatus(position, totalRows) {
-      if (state.activeMode === "group") {
+      if (state.activeMode === "group" || state.activeMode === "notesGroup") {
         return { label: "◆ Grupo", rowClass: "", badgeClass: "status-meio" };
       }
 
@@ -3768,6 +3833,7 @@
       state.groupRanking = [];
       state.noteDay = [];
       state.noteOverall = [];
+      state.noteGroupRanking = [];
       state.qualitySummary = null;
       state.praiseComments = [];
       state.activeMode = "general";
@@ -3868,6 +3934,10 @@
       return Number(value || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
+    function formatPercent(value) {
+      return `${Number(value || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+    }
+
     function escapeHtml(value) {
       return String(value ?? "")
         .replaceAll("&", "&amp;")
@@ -3885,6 +3955,6 @@
       }, 6500);
     }
   </script>
-<!-- versao: historico-cumulativo-firebase-subcolecao-sync-merge -->
+<!-- versao: historico-cumulativo-firebase-subcolecao-sync-merge-notas-grupo -->
 </body>
 </html>
