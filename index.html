@@ -178,16 +178,14 @@
       margin-bottom: 10px;
     }
 
-    .scorecard.metric-average {
-      border-left: 5px solid var(--yellow-500);
-      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,250,224,.96));
-    }
-
     .scorecard {
-      background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(231,238,247,.95));
-      border: 1px solid rgba(255,255,255,.52);
+      --card-accent: var(--blue-500);
+      --card-glow: rgba(47, 128, 237, .28);
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(235,244,255,.96));
+      border: 1px solid rgba(255,255,255,.58);
+      border-left: 5px solid var(--card-accent);
       border-radius: var(--radius-lg);
-      box-shadow: 0 14px 30px rgba(3, 10, 18, .22);
+      box-shadow: 0 14px 30px rgba(3, 10, 18, .20), 0 0 0 1px rgba(255,255,255,.20), 0 0 24px var(--card-glow);
       padding: 12px 15px;
       min-height: 66px;
       overflow: hidden;
@@ -246,6 +244,48 @@
       line-height: 1.1;
       text-transform: uppercase;
       letter-spacing: .03em;
+    }
+
+
+    .scorecard:nth-child(1) {
+      --card-accent: #2f80ed;
+      --card-glow: rgba(47, 128, 237, .30);
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(231,243,255,.96));
+    }
+
+    .scorecard:nth-child(2) {
+      --card-accent: #14b8a6;
+      --card-glow: rgba(20, 184, 166, .28);
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(229,250,247,.96));
+    }
+
+    .scorecard:nth-child(3) {
+      --card-accent: #22c55e;
+      --card-glow: rgba(34, 197, 94, .30);
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(232,255,241,.96));
+    }
+
+    .scorecard:nth-child(4) {
+      --card-accent: #f97316;
+      --card-glow: rgba(249, 115, 22, .28);
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,242,229,.96));
+    }
+
+    .scorecard:nth-child(5),
+    .scorecard.metric-average {
+      --card-accent: var(--yellow-500);
+      --card-glow: rgba(234, 179, 8, .34);
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,250,224,.96));
+    }
+
+    .scorecard:nth-child(6) {
+      --card-accent: #8b5cf6;
+      --card-glow: rgba(139, 92, 246, .30);
+      background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(241,235,255,.96));
+    }
+
+    .scorecard:hover {
+      box-shadow: 0 16px 34px rgba(3, 10, 18, .24), 0 0 30px var(--card-glow);
     }
 
 
@@ -1578,6 +1618,71 @@
       color: #0f2948;
     }
 
+    body.theme-oceano {
+      --navy-950: #031525;
+      --navy-900: #062338;
+      --navy-800: #0b4f6c;
+      --blue-500: #06b6d4;
+      --green-500: #2dd4bf;
+      --yellow-300: #fde68a;
+      background:
+        radial-gradient(circle at 18% -8%, rgba(6,182,212,.42), transparent 34rem),
+        radial-gradient(circle at 84% 0%, rgba(45,212,191,.22), transparent 34rem),
+        linear-gradient(180deg, #031525 0%, #031525 310px, #edfaff 310px, #edfaff 100%);
+    }
+
+    body.theme-grafite {
+      --navy-950: #09090b;
+      --navy-900: #18181b;
+      --navy-800: #27272a;
+      --blue-500: #a1a1aa;
+      --green-500: #84cc16;
+      --yellow-300: #fde047;
+      background:
+        radial-gradient(circle at 18% -8%, rgba(161,161,170,.32), transparent 34rem),
+        radial-gradient(circle at 84% 0%, rgba(132,204,22,.16), transparent 34rem),
+        linear-gradient(180deg, #09090b 0%, #09090b 310px, #f4f4f5 310px, #f4f4f5 100%);
+    }
+
+    body.theme-sunset {
+      --navy-950: #2b0f17;
+      --navy-900: #431407;
+      --navy-800: #7c2d12;
+      --blue-500: #fb7185;
+      --green-500: #f59e0b;
+      --yellow-300: #fde68a;
+      background:
+        radial-gradient(circle at 18% -8%, rgba(251,113,133,.42), transparent 34rem),
+        radial-gradient(circle at 84% 0%, rgba(245,158,11,.24), transparent 34rem),
+        linear-gradient(180deg, #2b0f17 0%, #2b0f17 310px, #fff7ed 310px, #fff7ed 100%);
+    }
+
+    body.theme-roxo {
+      --navy-950: #170724;
+      --navy-900: #2e1065;
+      --navy-800: #4c1d95;
+      --blue-500: #a855f7;
+      --green-500: #ec4899;
+      --yellow-300: #fde047;
+      background:
+        radial-gradient(circle at 18% -8%, rgba(168,85,247,.42), transparent 34rem),
+        radial-gradient(circle at 84% 0%, rgba(236,72,153,.22), transparent 34rem),
+        linear-gradient(180deg, #170724 0%, #170724 310px, #faf5ff 310px, #faf5ff 100%);
+    }
+
+    body.theme-verde {
+      --navy-950: #052e1a;
+      --navy-900: #064e3b;
+      --navy-800: #047857;
+      --blue-500: #10b981;
+      --green-500: #22c55e;
+      --yellow-300: #bef264;
+      background:
+        radial-gradient(circle at 18% -8%, rgba(16,185,129,.38), transparent 34rem),
+        radial-gradient(circle at 84% 0%, rgba(190,242,100,.18), transparent 34rem),
+        linear-gradient(180deg, #052e1a 0%, #052e1a 310px, #f0fdf4 310px, #f0fdf4 100%);
+    }
+
     .theme-select {
       border: 1px solid rgba(255,255,255,.18);
       border-radius: 14px;
@@ -2157,6 +2262,11 @@
           <option value="soften">Tema Soften</option>
           <option value="neon">Tema Neon</option>
           <option value="claro">Tema Claro</option>
+          <option value="oceano">Tema Oceano</option>
+          <option value="grafite">Tema Grafite</option>
+          <option value="sunset">Tema Sunset</option>
+          <option value="roxo">Tema Roxo</option>
+          <option value="verde">Tema Verde</option>
         </select>
         <button class="btn-ghost" id="carouselBtn" type="button">🎠 Carrossel ON</button>
         <button class="btn-dark" id="firebaseConfigBtn" type="button">☁️ Firebase</button>
@@ -3153,9 +3263,9 @@
 
 
     function setTheme(theme) {
-      const validThemes = ["classico", "soften", "neon", "claro"];
+      const validThemes = ["classico", "soften", "neon", "claro", "oceano", "grafite", "sunset", "roxo", "verde"];
       state.theme = validThemes.includes(theme) ? theme : "classico";
-      document.body.classList.remove("theme-classico", "theme-soften", "theme-neon", "theme-claro");
+      document.body.classList.remove("theme-classico", "theme-soften", "theme-neon", "theme-claro", "theme-oceano", "theme-grafite", "theme-sunset", "theme-roxo", "theme-verde");
       document.body.classList.add(`theme-${state.theme}`);
       els.themeSelect.value = state.theme;
     }
