@@ -173,7 +173,7 @@
 
     .scorecards {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 10px;
       margin-bottom: 10px;
     }
@@ -192,6 +192,11 @@
       min-height: 66px;
       overflow: hidden;
       position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
     }
 
     .scorecard:after {
@@ -208,6 +213,8 @@
       display: flex;
       gap: 7px;
       align-items: center;
+      justify-content: center;
+      width: 100%;
       color: #2b405a;
       font-size: 13px;
       font-weight: 950;
@@ -217,6 +224,8 @@
 
     .scorecard b {
       display: block;
+      width: 100%;
+      text-align: center;
       margin-top: 5px;
       font-size: clamp(18px, 1.55vw, 24px);
       letter-spacing: -.035em;
@@ -228,6 +237,8 @@
 
     .scorecard small {
       display: block;
+      width: 100%;
+      text-align: center;
       margin-top: 2px;
       color: #51627a;
       font-size: 10px;
@@ -950,7 +961,7 @@
     }
 
     .presentation .scorecards {
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(6, 1fr);
       gap: 6px;
       margin-bottom: 0;
     }
@@ -1394,7 +1405,7 @@
 
     .presentation.tv-mega-compact .scorecards {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(6, 1fr);
       gap: 3px;
       margin-bottom: 0;
     }
@@ -2159,7 +2170,7 @@
 
     <section class="scorecards">
       <article class="scorecard">
-        <span>📅 Última data do filtro</span>
+        <span>📅 Última data importada</span>
         <b id="dayCard">-</b>
         <small>base da aba do dia</small>
       </article>
@@ -2181,7 +2192,12 @@
       <article class="scorecard metric-average">
         <span>⭐ Média avaliações</span>
         <b id="avgServiceCard">-</b>
-        <small><strong id="totalRatingsCard">0</strong> avaliações no período</small>
+        <small>média ponderada no período</small>
+      </article>
+      <article class="scorecard">
+        <span>📊 Total avaliações</span>
+        <b id="totalRatingsCard">0</b>
+        <small>avaliações no período selecionado</small>
       </article>
     </section>
 

@@ -27,7 +27,8 @@ Painel web em estilo transmissão/TV para acompanhar atendimentos finalizados e 
   - dias considerados no período;
   - líder de atendimentos no período;
   - líder de notas no período;
-  - média geral das avaliações no período.
+  - média geral das avaliações no período;
+  - total de avaliações no período selecionado.
 - Coluna de média de nota somente nas abas de notas.
 - G6 e Z4 em destaque na classificação atual.
 - Carrossel automático entre telas.
@@ -136,6 +137,16 @@ No ranking **Notas por grupo**, o painel também calcula a participação de cad
 ```
 
 Esse percentual aparece na coluna **% do total**.
+
+## Card de total de avaliações
+
+Além do card de média geral de avaliações, o painel possui um card separado com o total de avaliações consideradas no período selecionado.
+
+Esse total respeita os filtros de data ativos na tela e é calculado pela soma de:
+
+```text
+Nota 5 + Nota 4 + Nota 3 + Nota 2 + Nota 1
+```
 
 ## Histórico cumulativo com Firebase
 
