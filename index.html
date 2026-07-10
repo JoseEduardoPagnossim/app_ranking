@@ -229,12 +229,6 @@
       border: 1px solid rgba(22, 163, 74, .24);
     }
 
-    body.presentation .menu-toggle,
-    body.presentation .side-menu-overlay,
-    body.presentation .actions.side-menu {
-      display: none !important;
-    }
-
     .eyebrow {
       display: inline-flex;
       gap: 9px;
@@ -1242,10 +1236,14 @@
     }
 
     .presentation .actions,
-    .presentation .filters,
-    .presentation .period-filter,
     .presentation .message {
       display: none !important;
+    }
+
+    /* No modo TV/Grafana, os filtros continuam visíveis para permitir ajuste direto no painel. */
+    .presentation .filters,
+    .presentation .period-filter {
+      display: flex !important;
     }
 
     .presentation .scorecards {
@@ -2935,10 +2933,121 @@
       }
     }
 
+
+    /* Modo TV/Grafana: apresentação permanente com filtros visíveis */
+    body.presentation .filters {
+      display: flex !important;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 6px;
+    }
+
+    body.presentation .period-filter {
+      display: flex !important;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 6px;
+      grid-column: 1 / -1;
+    }
+
+    body.presentation .filters input,
+    body.presentation .filters select,
+    body.presentation .period-filter input,
+    body.presentation .period-filter select {
+      height: 30px;
+      min-width: 120px;
+      max-width: 190px;
+      padding: 0 9px;
+      font-size: 11px;
+      border-radius: 999px;
+    }
+
+    body.presentation .period-filter input[type="date"] {
+      min-width: 126px;
+      max-width: 142px;
+    }
+
+    body.presentation .period-filter .mini-button,
+    body.presentation .filters .mini-button {
+      height: 30px;
+      min-height: 30px;
+      padding: 0 10px;
+      font-size: 11px;
+      border-radius: 999px;
+    }
+
+    body.presentation .filters .pill {
+      padding: 6px 9px;
+      font-size: 10px;
+    }
+
+    body.presentation .ranking-head {
+      grid-template-columns: minmax(260px, 1fr) minmax(560px, auto);
+      align-items: center;
+      gap: 10px;
+    }
+
+    body.presentation .ranking-head h2 {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    body.presentation .ranking-head p {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 1200px) {
+      body.presentation .ranking-head {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+
+      body.presentation .filters,
+      body.presentation .period-filter {
+        justify-content: flex-start;
+      }
+    }
+
+
+    /* Modo TV/Grafana: mantém o menu lateral disponível e oculta apenas o botão de apresentação */
+    body.presentation .menu-toggle {
+      display: inline-flex !important;
+    }
+
+    body.presentation .side-menu-overlay[hidden] {
+      display: none !important;
+    }
+
+    body.presentation.side-menu-open .side-menu-overlay {
+      display: block !important;
+    }
+
+    body.presentation .actions.side-menu {
+      display: flex !important;
+    }
+
+    body.presentation #presentationBtn {
+      display: none !important;
+    }
+
+    body.presentation .topbar {
+      padding-top: 54px;
+    }
+
+    @media (max-width: 720px) {
+      body.presentation .topbar {
+        padding-top: 58px;
+      }
+    }
+
   </style>
 </head>
 
-<body>
+<body class="presentation">
   <div class="app">
     <header class="topbar">
       <button class="menu-toggle" id="menuToggleBtn" type="button" aria-controls="sideMenu" aria-expanded="false">☰ Menu</button>
@@ -3144,6 +3253,11 @@
     const SETTINGS_KEY = "brasileirao-atendimento-settings-v1";
     const FIREBASE_SETTINGS_KEY = "brasileirao-atendimento-firebase-v1";
     const PRESENTATION_KEY = "brasileirao-atendimento-presentation-v1";
+    // Padrão para uso em TV/Grafana: abre sempre em modo apresentação.
+    // Use ?admin=1 na URL para abrir o painel administrativo normal.
+    const URL_PARAMS = new URLSearchParams(window.location.search);
+    const FORCE_PRESENTATION_MODE = URL_PARAMS.get("admin") !== "1";
+    const REQUEST_FULLSCREEN_ON_PRESENTATION = URL_PARAMS.get("fullscreen") === "1";
     const FIREBASE_COLLECTION = "paineis";
     const FIREBASE_DOCUMENT = "brasileirao-atendimento";
 
@@ -3269,6 +3383,37 @@
 
     init();
 
+    function applyPermanentPresentationMode() {
+      if (!FORCE_PRESENTATION_MODE) {
+        if (els.presentationBtn) {
+          els.presentationBtn.hidden = false;
+          els.presentationBtn.style.display = "";
+          els.presentationBtn.disabled = false;
+        }
+        if (localStorage.getItem(PRESENTATION_KEY) !== "on") {
+          document.body.classList.remove("presentation", "tv-force-ranking", "tv-ultra-compact", "tv-mega-compact");
+        }
+        return;
+      }
+
+      localStorage.setItem(PRESENTATION_KEY, "on");
+      closeSideMenu();
+      document.body.classList.add("presentation");
+      state.twoColumns = true;
+
+      if (els.presentationBtn) {
+        els.presentationBtn.textContent = "🖥️ Modo apresentação fixo";
+        els.presentationBtn.disabled = true;
+        els.presentationBtn.hidden = true;
+        els.presentationBtn.style.display = "none";
+        els.presentationBtn.title = "Modo apresentação permanente. Use ?admin=1 na URL para acessar o painel administrativo.";
+      }
+
+      if (els.layoutBtn) {
+        els.layoutBtn.textContent = "2 colunas";
+      }
+    }
+
     function openSideMenu() {
       document.body.classList.add("side-menu-open");
       if (els.sideMenuOverlay) els.sideMenuOverlay.hidden = false;
@@ -3303,6 +3448,8 @@
     }
 
     function init() {
+      applyPermanentPresentationMode();
+
       els.menuToggleBtn?.addEventListener("click", toggleSideMenu);
       els.sideMenuCloseBtn?.addEventListener("click", closeSideMenu);
       els.sideMenuOverlay?.addEventListener("click", closeSideMenu);
@@ -3379,6 +3526,12 @@
       });
 
       els.presentationBtn.addEventListener("click", async () => {
+        if (FORCE_PRESENTATION_MODE) {
+          showMessage("Modo apresentação permanente ativo. Use ?admin=1 na URL para acessar o painel administrativo.", "info");
+          applyPermanentPresentationMode();
+          return;
+        }
+
         const entering = !document.body.classList.contains("presentation");
 
         if (entering) {
@@ -3434,7 +3587,11 @@
 
         if (event.key === "Escape" && document.body.classList.contains("presentation")) {
           event.preventDefault();
-          exitPresentation();
+          if (!FORCE_PRESENTATION_MODE) {
+            exitPresentation();
+          } else {
+            applyPermanentPresentationMode();
+          }
           return;
         }
 
@@ -3444,11 +3601,15 @@
 
         if (key === "p") {
           event.preventDefault();
-          const entering = !document.body.classList.contains("presentation");
-          if (entering) {
-            enterPresentation();
+          if (FORCE_PRESENTATION_MODE) {
+            applyPermanentPresentationMode();
           } else {
-            exitPresentation();
+            const entering = !document.body.classList.contains("presentation");
+            if (entering) {
+              enterPresentation();
+            } else {
+              exitPresentation();
+            }
           }
         }
 
@@ -3485,10 +3646,11 @@
       });
 
       document.addEventListener("visibilitychange", () => {
-        if (!document.hidden && localStorage.getItem(PRESENTATION_KEY) === "on") {
+        if (!document.hidden && (FORCE_PRESENTATION_MODE || localStorage.getItem(PRESENTATION_KEY) === "on")) {
+          applyPermanentPresentationMode();
           document.body.classList.add("presentation");
           state.twoColumns = true;
-          els.presentationBtn.textContent = "🖥️ Sair apresentação";
+          els.presentationBtn.textContent = FORCE_PRESENTATION_MODE ? "🖥️ Modo apresentação fixo" : "🖥️ Sair apresentação";
           setTimeout(renderAll, 120);
         }
       });
@@ -3502,9 +3664,11 @@
       }, 20000);
 
       loadSettings();
+      applyPermanentPresentationMode();
       initFirebaseFromStorage();
 
       const loaded = loadFromStorage();
+      applyPermanentPresentationMode();
       if (!loaded) renderAll();
 
       if (state.firebaseReady && !loaded) {
@@ -4006,25 +4170,32 @@
 
 
     async function enterPresentation() {
+      closeSideMenu();
       localStorage.setItem(PRESENTATION_KEY, "on");
       document.body.classList.add("presentation");
       state.twoColumns = true;
 
       try {
-        if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+        if (REQUEST_FULLSCREEN_ON_PRESENTATION && !document.fullscreenElement && document.documentElement.requestFullscreen) {
           await document.documentElement.requestFullscreen();
         }
       } catch (error) {
         console.warn("Tela cheia não permitida pelo navegador.", error);
       }
 
-      els.presentationBtn.textContent = "🖥️ Sair apresentação";
+      els.presentationBtn.textContent = FORCE_PRESENTATION_MODE ? "🖥️ Modo apresentação fixo" : "🖥️ Sair apresentação";
       renderAll();
       setTimeout(renderAll, 250);
       setTimeout(renderAll, 700);
     }
 
     async function exitPresentation(shouldExitFullscreen = true) {
+      if (FORCE_PRESENTATION_MODE) {
+        applyPermanentPresentationMode();
+        renderAll();
+        return;
+      }
+
       localStorage.setItem(PRESENTATION_KEY, "off");
       document.body.classList.remove("presentation", "tv-force-ranking", "tv-ultra-compact", "tv-mega-compact");
       document.documentElement.style.removeProperty("--tv-row-height");

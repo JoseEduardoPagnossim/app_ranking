@@ -451,7 +451,7 @@ O modo apresentação é voltado para TV ou monitores de acompanhamento.
 
 Quando ativo, o painel:
 
-- oculta a sidebar e o botão Menu;
+- mantém a sidebar e o botão Menu disponíveis;
 - esconde ações administrativas;
 - melhora o aproveitamento da tela;
 - ajusta a densidade das tabelas;
@@ -701,3 +701,69 @@ Sempre que publicar nova versão:
 5. Teste leitura sem login.
 6. Teste escrita com login autorizado.
 7. Teste sidebar e responsividade.
+
+---
+
+## Modo TV/Grafana permanente
+
+Esta versão foi ajustada para uso em dashboard/TV, inclusive dentro de painéis como Grafana.
+
+Comportamento padrão:
+
+- o painel abre automaticamente em **modo apresentação**;
+- o layout permanece em modo apresentação mesmo se a página for recarregada;
+- a tela não depende mais do clique manual em **Modo apresentação**;
+- o painel não tenta entrar em tela cheia automaticamente, evitando instabilidade dentro de iframe/dashboard;
+- os filtros continuam visíveis no modo apresentação;
+- a sidebar continua disponível no modo TV;
+- apenas o botão **Modo apresentação** fica oculto, pois o painel já abre nesse modo.
+
+### URL para TV/Grafana
+
+Use a URL normal do painel:
+
+```text
+https://joseeduardopagnossim.github.io/app_ranking/
+```
+
+### URL para acessar o painel administrativo
+
+Para abrir o painel fora do modo apresentação permanente, use:
+
+```text
+https://joseeduardopagnossim.github.io/app_ranking/?admin=1
+```
+
+Essa URL libera a sidebar, menu, importação, Sync, login e demais ações administrativas.
+
+### Tela cheia opcional
+
+Caso queira forçar tentativa de tela cheia fora do Grafana, use:
+
+```text
+https://joseeduardopagnossim.github.io/app_ranking/?fullscreen=1
+```
+
+No Grafana, a recomendação é não usar `fullscreen=1`, pois iframe/dashboard pode bloquear ou causar comportamento instável.
+
+
+
+### Menu lateral no modo TV
+
+Nesta versão TV/Grafana, o menu lateral continua acessível mesmo em modo apresentação permanente.
+
+Ficam disponíveis:
+
+- Importar CSV;
+- Recarregar;
+- Atualizar da nuvem;
+- Sync;
+- status Firebase;
+- tema;
+- carrossel;
+- 1 coluna / 2 colunas;
+- Entrar/Sair;
+- Firebase;
+- Limpar.
+
+O único botão removido do menu no modo TV é **Modo apresentação**, porque o painel já abre automaticamente nesse modo.
