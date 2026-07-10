@@ -3471,6 +3471,8 @@
         state.periodMode = "custom";
         state.startDate = els.startDateInput.value;
         state.endDate = els.endDateInput.value;
+        saveSettings();
+        saveToStorage();
         rebuildRankingsFromPeriod();
         renderAll();
       });
@@ -3478,6 +3480,8 @@
         state.periodMode = "custom";
         state.startDate = els.startDateInput.value;
         state.endDate = els.endDateInput.value;
+        saveSettings();
+        saveToStorage();
         rebuildRankingsFromPeriod();
         renderAll();
       });
@@ -3485,6 +3489,8 @@
         state.periodMode = "custom";
         state.startDate = els.startDateInput.value;
         state.endDate = els.endDateInput.value;
+        saveSettings();
+        saveToStorage();
         rebuildRankingsFromPeriod();
         renderAll();
       });
@@ -4309,15 +4315,40 @@
       els.themeSelect.value = state.theme;
     }
 
-    function loadSettings() {
+    function getSavedSettings() {
       try {
-        const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
-        state.carouselEnabled = saved.carouselEnabled ?? true;
-        state.theme = "claro";
+        return JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}") || {};
       } catch (error) {
-        state.carouselEnabled = true;
-        state.theme = "claro";
+        console.warn("Configurações locais inválidas. Recriando preferências.", error);
+        return {};
       }
+    }
+
+    function hasSavedPeriodSettings(saved = getSavedSettings()) {
+      return Boolean(
+        saved.periodMode ||
+        saved.startDate ||
+        saved.endDate
+      );
+    }
+
+    function applySavedPeriodSettings(saved = getSavedSettings()) {
+      if (!hasSavedPeriodSettings(saved)) return false;
+
+      state.periodMode = saved.periodMode || "custom";
+      state.startDate = saved.startDate || "";
+      state.endDate = saved.endDate || "";
+
+      return true;
+    }
+
+    function loadSettings() {
+      const saved = getSavedSettings();
+
+      state.carouselEnabled = saved.carouselEnabled ?? true;
+      state.theme = "claro";
+
+      applySavedPeriodSettings(saved);
 
       setTheme(state.theme);
       saveSettings();
@@ -4327,7 +4358,10 @@
     function saveSettings() {
       localStorage.setItem(SETTINGS_KEY, JSON.stringify({
         carouselEnabled: state.carouselEnabled,
-        theme: state.theme
+        theme: state.theme,
+        periodMode: state.periodMode,
+        startDate: state.startDate,
+        endDate: state.endDate
       }));
     }
 
@@ -4800,12 +4834,22 @@
         state.importedAt = meta.importedAt || "";
         state.rows = rows;
 
+        const savedSettings = getSavedSettings();
+        const hasLocalPeriod = hasSavedPeriodSettings(savedSettings);
+
         if (meta.settings) {
-          state.periodMode = meta.settings.periodMode || state.periodMode;
-          state.startDate = meta.settings.startDate || state.startDate;
-          state.endDate = meta.settings.endDate || state.endDate;
-          state.carouselEnabled = meta.settings.carouselEnabled ?? state.carouselEnabled;
+          if (!hasLocalPeriod) {
+            state.periodMode = meta.settings.periodMode || state.periodMode;
+            state.startDate = meta.settings.startDate || state.startDate;
+            state.endDate = meta.settings.endDate || state.endDate;
+          }
+
+          state.carouselEnabled = savedSettings.carouselEnabled ?? meta.settings.carouselEnabled ?? state.carouselEnabled;
           setTheme("claro");
+        }
+
+        if (hasLocalPeriod) {
+          applySavedPeriodSettings(savedSettings);
         }
 
         const processed = processRows(rowsToRawRows(state.rows));
@@ -5063,6 +5107,8 @@
 
       syncPeriodInputs();
       rebuildRankingsFromPeriod();
+
+      saveSettings();
 
       if (shouldRender) {
         saveToStorage();
@@ -5424,10 +5470,13 @@
         state.importedAt = payload.importedAt || "";
         state.rows = processed.rows;
         state.groups = processed.groups;
-        state.periodMode = payload.periodMode || "currentMonth";
-        state.startDate = payload.startDate || "";
-        state.endDate = payload.endDate || "";
-        state.carouselEnabled = payload.carouselEnabled ?? state.carouselEnabled;
+        const savedSettings = getSavedSettings();
+        const hasLocalPeriod = hasSavedPeriodSettings(savedSettings);
+
+        state.periodMode = hasLocalPeriod ? (savedSettings.periodMode || "custom") : (payload.periodMode || "currentMonth");
+        state.startDate = hasLocalPeriod ? (savedSettings.startDate || "") : (payload.startDate || "");
+        state.endDate = hasLocalPeriod ? (savedSettings.endDate || "") : (payload.endDate || "");
+        state.carouselEnabled = savedSettings.carouselEnabled ?? payload.carouselEnabled ?? state.carouselEnabled;
         setTheme("claro");
 
         if (!state.periodMode) {
